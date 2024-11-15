@@ -29,17 +29,13 @@ exports.sermons_list = asyncHandler(async (req, res, next) => {
 // Display detail page for sermon
 exports.sermon_detail = asyncHandler(async (req, res, next) => {
     let sermonId = req.query.id;
-    console.log("SERMON ID: " + sermonId);
     let sermon_obj = null;
     for (var sermon of orderedSermonData) {
-        console.log("SERMON: " + sermon);
-        console.log("Comparing " + sermon.id + " " + sermonId)
         if (sermon.id == parseInt(sermonId)) {
             sermon_obj = sermon;
             break;
         }
     }
-    console.log(sermon_obj)
     res.status(200).render("sermon_detail", {sermon: sermon_obj}); //send("NOT IMPLEMENTED: Sermon Details");
 });
 
