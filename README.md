@@ -15,7 +15,7 @@ test server we use nodemon so we can watch for changes in the project and reload
 server to pick up those changes. To start this dev server you run
 
 ```
-npm run serverstart
+npm run devserver
 ```
 
 >The option devstart will set the DEBUG environmnet varibale and then start the app

@@ -1,11 +1,11 @@
 {
   "name": "samuel-sermons-express",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "devstart": "nodemon ./bin/www",
-    "serverstart": "SET DEBUG=samuel-sermons-express:* & npm run devstart"
+    "start": "node ./src/bin/www",
+    "devstart": "nodemon ./src/bin/www",
+    "devserver": "SET DEBUG=samuel-sermons-express:* & npm run devstart"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
