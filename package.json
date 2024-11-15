@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./src/bin/www",
+    "start": "node --max-old-space-size=500 ./src/bin/www",
     "devstart": "nodemon ./src/bin/www",
     "devserver": "SET DEBUG=samuel-sermons-express:* & npm run devstart"
   },
