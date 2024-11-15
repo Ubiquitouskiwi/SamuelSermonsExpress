@@ -1,0 +1,84 @@
+extends layout
+
+block content
+    div
+        .sermons.text-center
+            .container.sermons-welcome-message
+                br
+                h1 Sermons
+                hr
+                p.sermons-message
+                    | This is a list of unprocessed scans of Samuel Starling&apos;s
+                    | sermons.
+                    | Future plans are to take
+                    | these scans and
+                    | run
+                    | them through an OCR program to get the text into computer readable format. Check
+                    | back
+                    | periodically to
+                    | find
+                    | updates!
+                    | Right now I have found two (2) different sermon &quot;packages&quot;. One I am calling
+                    | ordered
+                    | where they have an envelope and have been numbered by Samuel. The other type are
+                    | the
+                    | unordered sermons. These are the ones that have no number or envelope.
+                hr
+                br
+            ul.nav.nav-tabs.nav-fill
+                li.nav-item
+                    a#orderedSermonsButton.nav-link.active(aria-content='' href='#') Ordered Sermons
+                li.nav-item
+                    a#unorderedSermonsButton.nav-link(aria-content='' href='') Unordered Sermons
+            //- .sermon-search
+            //-     input#sermonSearchBar.sermon-search-input(type="text", placeholder="Search Sermons...") 
+            //-     button#sermonSearchButton.sermon-search-button(type="button") Search
+                                
+            .ordered-sermons.container   
+                br             
+                p
+                    | The ordered sermons follow a very loose common structure. You will find the order of
+                    | documents as:
+                ol
+                    li Scan of envelope
+                    li Scan of the actual sermon
+                    li Scan of the church program for that day
+                    li Scan of supplemental material for the sermon
+                hr
+                .container
+                    ul.sermon-list
+                        each sermon in orderedSermons                            
+                            li 
+                                a.nav-link(href="/sermons/details?id=" + sermon.id) 
+                                    case sermon.sermonType                                       
+                                        when "sermon"
+                                            span.sermonTypeTag.sermon-type=sermon.sermonType                                             
+                                        when "funeral"
+                                            span.sermonTypeTag.funeral-type=sermon.sermonType
+                                        when "special day" 
+                                            span.sermonTypeTag.special-day-type=sermon.sermonType
+                                        default
+                                            span.sermonTypeTag                                                    
+                                    span.sermonTitle=sermon.title                           
+                                    img(src='../images/open-in-new.svg')
+            .unordered-sermons.container.unactive-sermons
+                br
+                p
+                    | These are the unordered sermons. They are the ones that are loose leaf or ones that
+                    | are stapled to the program. For the latter the scan order is:
+                ol
+                    li Scan of Sermon
+                    li Scan of program for that sermon
+                hr
+                .container
+                    ul.sermon-list
+                        if unorderedSermons
+                            each sermon in unorderedSermons
+                                li 
+                                    a.nav-link(target="_blank", href=sermon.imageLink)
+                                        span=sermon.title 
+                                        img(src='../images/open-in-new.svg')
+                        else
+                            h3 Please check back later when some unordered sermons have been scanned
+            br
+            br

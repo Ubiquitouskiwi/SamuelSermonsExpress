@@ -1,0 +1,28 @@
+extends layout 
+
+block content 
+    .container
+        br
+        h1 Sermon Creation
+        hr
+
+        p.sermons-message This is the page where you can submit sermons to the system.
+            | The sermon title will be found on the folder. The Sermon 
+            | Image Link is the link to the hosted scans, and the sermon
+            | type is usually Sermon, Funeral, or Special Day
+        hr
+        br
+        .mb-3
+            input#sermonTitle.form-control(type="text", placeholder="Sermon Title")
+        .mb-3
+            input#sermonImageLink.form-control(type="text", placeholder="Sermon Image Link") 
+        .mb-3
+            input.form-control(list="sermonTypeList", placeholder="Sermon Type")
+            datalist#sermonTypeList 
+                option(value="Sermon")
+                option(value="Funeral")
+                option(value="Special Day")
+        .mb-3 
+            button(type="submit") Submit
+            button(type="concel") Cancel            
+        button(type="reset") Clear 
