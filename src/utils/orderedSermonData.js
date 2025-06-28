@@ -136,6 +136,12 @@ const orderedSermonData = [
         "title": "150. The Journey of Life", 
         "imageLink": "https://starlingtek-samuel-sermons.nyc3.cdn.digitaloceanspaces.com/sermons-processed/150_the-journey-of-life_sermon.pdf", 
         "sermonType": "sermon" 
+    },
+    {
+        "id": 24,
+        "title": "151. The Marks od Christ",
+        "imageLink": "https://starlingtek-samuel-sermons.nyc3.cdn.digitaloceanspaces.com/sermons-processed/151_the-marks-of-christ.pdf",
+        "sermonType": "sermon"
     }
 ]
 

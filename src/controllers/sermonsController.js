@@ -36,6 +36,15 @@ exports.sermon_detail = asyncHandler(async (req, res, next) => {
             break;
         }
     }
+
+    if (sermon_obj == null) {
+        for (var sermon of unorderedSermonData) {
+            if (sermon.id == parseInt(sermonId)) {
+                sermon_obj = sermon;
+                break;
+            }
+        }
+    }
     res.status(200).render("sermon_detail", {sermon: sermon_obj}); //send("NOT IMPLEMENTED: Sermon Details");
 });
 

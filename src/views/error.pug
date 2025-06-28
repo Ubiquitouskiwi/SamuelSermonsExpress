@@ -1,6 +1,33 @@
 extends layout
-
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+  .error-page.material-theme
+    // Material Design App Bar
+    .app-bar.primary-bg.elevation-4
+      .container.py-4.text-center
+        h1.mat-h1.white-text Error
+        p.mat-body-1.white-text.opacity-80.mt-3.mx-auto(style="max-width: 700px;")
+          | Something went wrong
+          
+    .container.mt-4.mb-5
+      // Error Message Card
+      .mat-card.elevation-2.mb-4
+        .mat-card-content.p-4.text-center
+          .mat-icon.display-4.text-danger error
+          h2.mat-h2.mt-3= message || "An error occurred"
+          if error && error.status
+            p.mat-body-1.mb-4.text-secondary
+              | Status code: 
+              span.text-danger= error.status
+          else
+            p.mat-body-1.mb-4.text-secondary We apologize for the inconvenience.
+          
+          a.mat-button.primary-bg.white-text.text-decoration-none.mt-2(href='/')
+            .mat-icon.me-2 home
+            span Return to Homepage
+            
+      // Technical Details Card (for developers)
+      if error && error.stack
+        .mat-card.elevation-1.mb-4
+          .mat-card-content.p-4
+            h3.mat-h3.mb-3 Technical Details
+            pre.bg-light.p-3.rounded(style="overflow-x: auto;")= error.stack

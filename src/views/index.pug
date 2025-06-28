@@ -1,34 +1,24 @@
 extends layout
-
 block content
-    div
-      .banner
-        h1 Samuel&apos;s Sermons
-        hr
-        br
-        p
-          | Welcome to the home of Samuel Starling&apos;s Sermons. This website is currently under construction,
-          | but
-          | soon you will
-          | be able to explore the powerful and inspiring sermons that were once delivered by Rev. Samuel Starling
-          | during his years of
-          | ministry in
-          | the Methodist Church. Please check back periodically as this site will be changing and new content added
-          | frequently!
-        br
-        a.nav-link(href='/sermons') Go To Sermons &gt;
-      .footer
-        p.footer-text
-          | Created By: 
-          a(href='https://www.tylerstarling.com' target='_blank')
-            | Tyler
-            | Starling
-    // Bootstrap 5 Javascript
-    script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js' integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM' crossorigin='anonymous')
-    script(type='application/ld+json').
-      {
-      "@context": "https://schema.org",
-      "name": "Samuel Sermons",
-      "@type": "WebSite",
-      "url": "https://www.samuelsermons.com",
-      }
+  .home-page.material-theme
+    // Full-page Jumbotron with WV Hills background image
+    .jumbotron.d-flex.align-items-center(style="background-color: #00274d; background-image: url('/images/wv-hills.jpg'); background-size: cover; background-position: center; min-height: 100vh; position: relative;")
+      // Overlay to ensure text readability
+      .overlay(style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 39, 77, 0.7);")
+      .container.py-5(style="position: relative; z-index: 1;")
+        .row.align-items-center.justify-content-center
+          .col-md-4.mb-5.mb-md-0.text-center
+            img.img-fluid.rounded.shadow(src="/images/samuel-starling-1.jpg" alt="Samuel Starling" style="max-width: 280px; border: 3px solid #f1c40f;")
+          .col-md-7.offset-md-1.text-center.text-md-start
+            h1.display-3.fw-bold.mb-4(style="color: #f1c40f; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);") Welcome to Samuel's Sermons
+            p.lead.mb-5(style="color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); font-size: 1.3rem;")
+              | This site is dedicated to preserving and sharing the powerful and inspiring sermons 
+              | delivered by Rev. Samuel Starling during his years of ministry in the Methodist Church. 
+              | These teachings reflect his wisdom, faith, and dedication to spiritual guidance.
+            .d-flex.flex-column.flex-sm-row.justify-content-center.justify-content-md-start
+              a.btn.btn-lg.mb-3.mb-sm-0.me-sm-3.text-decoration-none(style="background-color: #f1c40f; color: #00274d; font-weight: bold; padding: 0.6rem 2rem;" href="/sermons")
+                | Explore Sermons
+                i.material-icons.ms-2(style="vertical-align: middle;") arrow_forward
+              a.btn.btn-outline-light.btn-lg.text-decoration-none(style="border-width: 2px; font-weight: bold; padding: 0.6rem 2rem;" href="/about")
+                | About the Project
+                i.material-icons.ms-2(style="vertical-align: middle;") info

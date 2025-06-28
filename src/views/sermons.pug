@@ -1,84 +1,283 @@
 extends layout
-
 block content
-    div
-        .sermons.text-center
-            .container.sermons-welcome-message
-                br
-                h1 Sermons
-                hr
-                p.sermons-message
-                    | This is a list of unprocessed scans of Samuel Starling&apos;s
-                    | sermons.
-                    | Future plans are to take
-                    | these scans and
-                    | run
-                    | them through an OCR program to get the text into computer readable format. Check
-                    | back
-                    | periodically to
-                    | find
-                    | updates!
-                    | Right now I have found two (2) different sermon &quot;packages&quot;. One I am calling
-                    | ordered
-                    | where they have an envelope and have been numbered by Samuel. The other type are
-                    | the
-                    | unordered sermons. These are the ones that have no number or envelope.
-                hr
-                br
-            ul.nav.nav-tabs.nav-fill
-                li.nav-item
-                    a#orderedSermonsButton.nav-link.active(aria-content='' href='#') Ordered Sermons
-                li.nav-item
-                    a#unorderedSermonsButton.nav-link(aria-content='' href='') Unordered Sermons
-            //- .sermon-search
-            //-     input#sermonSearchBar.sermon-search-input(type="text", placeholder="Search Sermons...") 
-            //-     button#sermonSearchButton.sermon-search-button(type="button") Search
-                                
-            .ordered-sermons.container   
-                br             
-                p
-                    | The ordered sermons follow a very loose common structure. You will find the order of
-                    | documents as:
-                ol
-                    li Scan of envelope
-                    li Scan of the actual sermon
-                    li Scan of the church program for that day
-                    li Scan of supplemental material for the sermon
-                hr
-                .container
-                    ul.sermon-list
-                        each sermon in orderedSermons                            
-                            li 
-                                a.nav-link(href="/sermons/details?id=" + sermon.id) 
-                                    case sermon.sermonType                                       
-                                        when "sermon"
-                                            span.sermonTypeTag.sermon-type=sermon.sermonType                                             
-                                        when "funeral"
-                                            span.sermonTypeTag.funeral-type=sermon.sermonType
-                                        when "special day" 
-                                            span.sermonTypeTag.special-day-type=sermon.sermonType
-                                        default
-                                            span.sermonTypeTag                                                    
-                                    span.sermonTitle=sermon.title                           
-                                    img(src='../images/open-in-new.svg')
-            .unordered-sermons.container.unactive-sermons
-                br
-                p
-                    | These are the unordered sermons. They are the ones that are loose leaf or ones that
-                    | are stapled to the program. For the latter the scan order is:
-                ol
-                    li Scan of Sermon
-                    li Scan of program for that sermon
-                hr
-                .container
-                    ul.sermon-list
-                        if unorderedSermons
-                            each sermon in unorderedSermons
-                                li 
-                                    a.nav-link(target="_blank", href=sermon.imageLink)
-                                        span=sermon.title 
-                                        img(src='../images/open-in-new.svg')
+  .sermons-page.material-theme
+    // Hero Header with Background Image
+    .sermon-hero(style="background-color: #00274d; background-image: url('/images/wv-hills.jpg'); background-size: cover; background-position: center; position: relative;")
+      .overlay(style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 39, 77, 0.8);")
+      .container.py-5.position-relative(style="z-index: 1;")
+        .text-center.py-4
+          h1.display-4.fw-bold.mb-3(style="color: #f1c40f; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);") Sermons Collection
+          p.lead.text-white.opacity-90.mt-3.mx-auto(style="max-width: 800px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);")
+            | Browse through the collected teachings of Rev. Samuel Starling, preserved and digitized for future generations.
+
+    .container.py-5
+      // Elegant Tabs Navigation
+      .sermon-tabs.mb-5
+        .card.border-0.shadow-sm.rounded-3.overflow-hidden
+          .card-header.border-0.p-0
+            ul#sermon-tabs.nav.nav-tabs.border-0.justify-content-center(role="tablist" style="background-color: #f8f9fa;")
+              li.nav-item(role="presentation")
+                button#ordered-tab.nav-link.active.py-3.px-4(data-bs-toggle="tab" data-bs-target="#ordered-sermons" type="button" role="tab" aria-controls="ordered-sermons" aria-selected="true" style="color: #00274d; border: none; border-bottom: 3px solid transparent;")
+                  i.material-icons.me-2 playlist_add_check
+                  | Ordered Sermons
+              li.nav-item(role="presentation")
+                button#unordered-tab.nav-link.py-3.px-4(data-bs-toggle="tab" data-bs-target="#unordered-sermons" type="button" role="tab" aria-controls="unordered-sermons" aria-selected="false" style="color: #00274d; border: none; border-bottom: 3px solid transparent;")
+                  i.material-icons.me-2 insert_drive_file
+                  | Unordered Sermons
+      
+      // Tab Content
+      .tab-content
+        // Ordered Sermons Tab
+        #ordered-sermons.tab-pane.fade.show.active(role="tabpanel" aria-labelledby="ordered-tab")
+          .row.mb-5
+            .col-lg-8.mb-4.mb-lg-0
+              h2.fw-bold.mb-4(style="color: #00274d; border-left: 4px solid #f1c40f; padding-left: 15px;") Ordered Sermons
+              p.lead.text-secondary.mb-4
+                | Samuel Starling carefully organized and numbered these sermons, storing them in individual envelopes.
+
+            .col-lg-4
+              .card.border-0.shadow-sm.h-100.p-3(style="background-color: #f8f9fa;")
+                h5.fw-bold.mb-3(style="color: #00274d;") What's Included
+                ul.list-unstyled
+                  li.mb-2.d-flex.align-items-center
+                    span.me-2(style="color: #f1c40f; font-weight: bold;") 1.
+                    span Envelope scan
+                  li.mb-2.d-flex.align-items-center
+                    span.me-2(style="color: #f1c40f; font-weight: bold;") 2.
+                    span Sermon document
+                  li.mb-2.d-flex.align-items-center
+                    span.me-2(style="color: #f1c40f; font-weight: bold;") 3.
+                    span Church program
+                  li.d-flex.align-items-center
+                    span.me-2(style="color: #f1c40f; font-weight: bold;") 4.
+                    span Supplemental materials
+
+          // Filter dropdown
+          .d-flex.justify-content-between.align-items-center.mb-4
+            .filter-controls
+              .input-group(style="max-width: 300px;")
+                label.input-group-text(for="sermonTypeFilter-ordered" style="background-color: #f8f9fa; border-color: #dee2e6;")
+                  i.material-icons.small.me-1 filter_list
+                  span.small Filter By
+                select#sermonTypeFilter-ordered.form-select(style="border-color: #dee2e6;")
+                  option(value="all") All Types
+                  option(value="sermon") Sermon
+                  option(value="funeral") Funeral
+                  option(value="special day") Special Day
+                  option(value="other") Other
+            .sermon-count.text-secondary.small
+              span#orderedCount= orderedSermons.length
+              |  sermons found
+
+          // Improved Sermon Grid
+          .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4.sermon-grid#ordered-sermon-grid
+            each sermon in orderedSermons
+              .col.sermon-item(data-type=sermon.sermonType)
+                .card.h-100.border-0.shadow-sm.sermon-card(style="transition: all 0.3s ease; height: 220px;")
+                  .card-body.pt-4.pb-2.px-4.d-flex.flex-column
+                    .sermon-header.mb-auto
+                      case sermon.sermonType
+                        when "sermon"
+                          .badge.rounded-pill.mb-3(style="background-color: #00274d; color: white; font-weight: normal; padding: 0.35rem 1rem;") 
+                            i.material-icons.me-1.small.align-text-bottom description
+                            | Sermon
+                        when "funeral"
+                          .badge.rounded-pill.mb-3(style="background-color: #6c757d; color: white; font-weight: normal; padding: 0.35rem 1rem;")
+                            i.material-icons.me-1.small.align-text-bottom church
+                            | Funeral
+                        when "special day"
+                          .badge.rounded-pill.mb-3(style="background-color: #f1c40f; color: #00274d; font-weight: normal; padding: 0.35rem 1rem;")
+                            i.material-icons.me-1.small.align-text-bottom event
+                            | Special Day
+                        default
+                          .badge.rounded-pill.mb-3(style="background-color: #e9ecef; color: #495057; font-weight: normal; padding: 0.35rem 1rem;")
+                            i.material-icons.me-1.small.align-text-bottom article
+                            | Other
+                      
+                      h3.card-title.fw-bold.mb-4.sermon-title(style="font-size: 1.1rem; line-height: 1.4; height: 50px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;") 
+                        if sermon.title.includes('.')
+                          span.text-primary.me-2(style="font-weight: 600;")= sermon.title.split('.')[0] + "."
+                          = sermon.title.split('. ')[1]
                         else
-                            h3 Please check back later when some unordered sermons have been scanned
-            br
-            br
+                          = sermon.title
+                  
+                  .card-footer.bg-transparent.border-top.pt-3.pb-3.px-4
+                    .d-flex.justify-content-between.align-items-center
+                      a.btn.btn-sm.btn-outline-secondary(href=`mailto:transcribe@samuelsermons.com?subject=Sermon Transcription: ${sermon.title}` style="border-radius: 30px; padding: 0.3rem 0.8rem;")
+                        i.material-icons.me-1.small edit_note
+                        span.small Transcribe
+                      a.btn.btn-sm.btn-primary(href="/sermons/details?id=" + sermon.id style="background-color: #00274d; border-color: #00274d; border-radius: 30px; padding: 0.3rem 0.8rem;")
+                        span.small View
+                        i.material-icons.ms-1.small visibility
+
+        // Unordered Sermons Tab
+        #unordered-sermons.tab-pane.fade(role="tabpanel" aria-labelledby="unordered-tab")
+          .row.mb-5
+            .col-lg-8.mb-4.mb-lg-0
+              h2.fw-bold.mb-4(style="color: #00274d; border-left: 4px solid #f1c40f; padding-left: 15px;") Unordered Sermons
+              p.lead.text-secondary.mb-4
+                | These are loose leaf sermons or ones stapled to church programs, discovered among Rev. Starling's papers.
+                
+            .col-lg-4
+              .card.border-0.shadow-sm.h-100.p-3(style="background-color: #f8f9fa;")
+                h5.fw-bold.mb-3(style="color: #00274d;") What's Included
+                ul.list-unstyled
+                  li.mb-2.d-flex.align-items-center
+                    span.me-2(style="color: #f1c40f; font-weight: bold;") 1.
+                    span Sermon scan
+                  li.d-flex.align-items-center
+                    span.me-2(style="color: #f1c40f; font-weight: bold;") 2.
+                    span Program (when available)
+
+          if unorderedSermons
+            // Filter dropdown for unordered sermons
+            .d-flex.justify-content-between.align-items-center.mb-4
+              .filter-controls
+                .input-group(style="max-width: 300px;")
+                  label.input-group-text(for="sermonTypeFilter-unordered" style="background-color: #f8f9fa; border-color: #dee2e6;")
+                    i.material-icons.small.me-1 filter_list
+                    span.small Filter By
+                  select#sermonTypeFilter-unordered.form-select(style="border-color: #dee2e6;")
+                    option(value="all") All Types
+                    option(value="sermon") Sermon
+                    option(value="funeral") Funeral
+                    option(value="special day") Special Day
+                    option(value="other") Other
+              .sermon-count.text-secondary.small
+                span#unorderedCount= unorderedSermons.length
+                |  sermons found
+
+            // Apply the same improved design to unordered sermons
+            .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4.sermon-grid#unordered-sermon-grid
+              each sermon in unorderedSermons
+                .col.sermon-item(data-type=sermon.sermonType)
+                  .card.h-100.border-0.shadow-sm.sermon-card(style="transition: all 0.3s ease; height: 220px;")
+                    .card-body.pt-4.pb-2.px-4.d-flex.flex-column
+                      .sermon-header.mb-auto
+                        case sermon.sermonType
+                          when "sermon"
+                            .badge.rounded-pill.mb-3(style="background-color: #00274d; color: white; font-weight: normal; padding: 0.35rem 1rem;") 
+                              i.material-icons.me-1.small.align-text-bottom description
+                              | Sermon
+                          when "funeral"
+                            .badge.rounded-pill.mb-3(style="background-color: #6c757d; color: white; font-weight: normal; padding: 0.35rem 1rem;")
+                              i.material-icons.me-1.small.align-text-bottom church
+                              | Funeral
+                          when "special day"
+                            .badge.rounded-pill.mb-3(style="background-color: #f1c40f; color: #00274d; font-weight: normal; padding: 0.35rem 1rem;")
+                              i.material-icons.me-1.small.align-text-bottom event
+                              | Special Day
+                          default
+                            .badge.rounded-pill.mb-3(style="background-color: #e9ecef; color: #495057; font-weight: normal; padding: 0.35rem 1rem;")
+                              i.material-icons.me-1.small.align-text-bottom article
+                              | Other
+                        
+                        h3.card-title.fw-bold.mb-4.sermon-title(style="font-size: 1.1rem; line-height: 1.4; height: 50px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;")= sermon.title
+                    
+                    .card-footer.bg-transparent.border-top.pt-3.pb-3.px-4
+                      .d-flex.justify-content-between.align-items-center
+                        a.btn.btn-sm.btn-outline-secondary(href=`mailto:transcribe@samuelsermons.com?subject=Sermon Transcription: ${sermon.title}` style="border-radius: 30px; padding: 0.3rem 0.8rem;")
+                          i.material-icons.me-1.small edit_note
+                          span.small Transcribe
+                        a.btn.btn-sm.btn-primary(href="/sermons/details?id=" + sermon.id style="background-color: #00274d; border-color: #00274d; border-radius: 30px; padding: 0.3rem 0.8rem;")
+                          span.small View
+                          i.material-icons.ms-1.small visibility
+          else
+            .empty-state.text-center.py-5.my-4
+              .rounded-circle.mx-auto.mb-4.d-flex.align-items-center.justify-content-center(style="width: 80px; height: 80px; background-color: #f8f9fa;")
+                i.material-icons(style="font-size: 2.5rem; color: #6c757d;") schedule
+              h3.h4.fw-bold.mb-3 Coming Soon
+              p.text-secondary.mb-0.mx-auto(style="max-width: 500px;") We're still digitizing the unordered sermon collection. Please check back later for updates.
+
+  // Enhanced script to handle filtering
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      // Explicitly initialize the Bootstrap tabs
+      var tabElems = document.querySelectorAll('#sermon-tabs [data-bs-toggle="tab"]');
+      tabElems.forEach(function(tabElem) {
+        tabElem.addEventListener('click', function(event) {
+          event.preventDefault();
+          // Get the tab to show
+          var targetTab = document.querySelector(this.getAttribute('data-bs-target'));
+          
+          // Hide all tabs first
+          document.querySelectorAll('.tab-pane').forEach(function(tab) {
+            tab.classList.remove('show', 'active');
+          });
+          
+          // Show the selected tab
+          targetTab.classList.add('show', 'active');
+          
+          // Update tab button states
+          document.querySelectorAll('#sermon-tabs .nav-link').forEach(function(navLink) {
+            navLink.classList.remove('active');
+            navLink.setAttribute('aria-selected', 'false');
+          });
+          
+          this.classList.add('active');
+          this.setAttribute('aria-selected', 'true');
+        });
+      });
+      
+      // Add filter functionality
+      function setupFilter(filterId, gridId, countId) {
+        const filter = document.getElementById(filterId);
+        const grid = document.getElementById(gridId);
+        const countElement = document.getElementById(countId);
+        
+        if (filter && grid) {
+          filter.addEventListener('change', function() {
+            const selectedType = this.value;
+            let visibleCount = 0;
+            
+            const sermonItems = grid.querySelectorAll('.sermon-item');
+            sermonItems.forEach(function(item) {
+              const sermonType = item.getAttribute('data-type');
+              
+              if (selectedType === 'all' || sermonType === selectedType) {
+                item.style.display = '';
+                visibleCount++;
+              } else {
+                item.style.display = 'none';
+              }
+            });
+            
+            // Update the count
+            if (countElement) {
+              countElement.textContent = visibleCount;
+            }
+          });
+        }
+      }
+      
+      // Initialize filters for both tabs
+      setupFilter('sermonTypeFilter-ordered', 'ordered-sermon-grid', 'orderedCount');
+      setupFilter('sermonTypeFilter-unordered', 'unordered-sermon-grid', 'unorderedCount');
+      
+      // Enhanced hover effect for cards
+      const sermonCards = document.querySelectorAll('.sermon-card');
+      sermonCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          card.style.transform = 'translateY(-8px)';
+          card.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
+          // Gently highlight the card
+          card.style.borderLeft = '3px solid #f1c40f';
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'translateY(0)';
+          card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+          card.style.borderLeft = 'none';
+        });
+      });
+      
+      // Add visual feedback for buttons
+      const buttonElements = document.querySelectorAll('.card-footer .btn');
+      buttonElements.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+          button.style.transform = 'translateY(-2px)';
+        });
+        button.addEventListener('mouseleave', () => {
+          button.style.transform = 'translateY(0)';
+        });
+      });
+    });

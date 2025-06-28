@@ -1,45 +1,70 @@
-extends layout 
+extends layout
+block content
+  .about-page.material-theme
+    // Hero Header with Background Image (matches the sermons page)
+    .about-hero(style="background-color: #00274d; background-image: url('/images/wv-hills.jpg'); background-size: cover; background-position: center; position: relative;")
+      .overlay(style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 39, 77, 0.8);")
+      .container.py-5.position-relative(style="z-index: 1;")
+        .text-center.py-4
+          h1.display-4.fw-bold.mb-3(style="color: #f1c40f; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);") About Samuel's Sermons
+          p.lead.text-white.opacity-90.mt-3.mx-auto(style="max-width: 800px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);")
+            | Learn about Rev. Samuel Starling and the mission to preserve his spiritual legacy
 
-block content 
-    div
-    .container
-        
-        br
-        .text-center
-        img.samuel-picture(src='../images/samuel-starling-1.jpg' width='200' alt='Samuel Showing You Are #1')
-        br
-        h1 About Samuel&apos;s Sermons
-        hr
-        br
-        p
-        | This website is dedicated to the memory of my grandfather, Samuel Starling, who was a minister for the
-        | Methodist church
-        | and a constant source of wisdom, kindness, and support to all who knew him. When he passed away, he left
-        | behind a file
-        | cabinet filled with a huge collection of his sermons; thoughtfully written, spanning decades, with
-        | some dating back as
-        | early as the 1980s. These sermons are more than just words on paper; they reflect his deep desire to
-        | guide, uplift, and
-        | offer hope to others.
-        p
-        | As I work through this collection, I&apos;m not only organizing his teachings but also reconnecting with who
-        | he was and the
-        | values he held dear. This project is, in many ways, a labor of love; an effort to preserve his legacy
-        | and
-        | share a part of
-        | him with those who knew him and those who never had the chance. Samuel Starling was always willing to
-        | help others, and
-        | it feels fitting that his words might continue to offer support and insight to anyone who may need it.
-        p
-        | This site will continue to grow as I gradually add more of his sermons, each one a small piece of the
-        | legacy he left
-        | behind. I hope that by sharing his voice here, others may find comfort, guidance, and inspiration, just
-        | as many did
-        | during his lifetime.
-        p
-        | P.S. If you can transcribe any of the sermons on this website, I would very much appreciate it. If you
-        | feel so
-        | inclined please email the transcription to:
-        a.nav-link(href='mailto:transcribe@samuelsermons.com') transcribe@samuelsermons.com
-        br
-        br
+    .container.py-5
+      // About Card with Elegant Design
+      .card.border-0.shadow-sm.rounded-3.overflow-hidden.mb-5
+        .card-body.p-0
+          .row.g-0
+            .col-md-4.text-center.py-5(style="background-color: #f8f9fa;")
+              img.samuel-picture.rounded-3.shadow-sm.mb-4(src='../images/samuel-starling-1.jpg' width='220' alt='Rev. Samuel Starling' style="border: 3px solid #f1c40f;")
+              h3.fw-bold.mb-2(style="color: #00274d;") Rev. Samuel Starling
+              p.text-muted Minister & Spiritual Guide
+              
+            .col-md-8.p-5
+              h2.fw-bold.mb-4(style="color: #00274d; border-left: 4px solid #f1c40f; padding-left: 15px;") Preserving a Legacy
+              
+              p.lead.mb-4
+                | This website is dedicated to the memory of my grandfather, Samuel Starling, a dedicated minister whose 
+                | wisdom, kindness, and spiritual guidance touched countless lives through the Methodist church.
+              
+              p.mb-4
+                | When he passed away, he left behind a treasure trove of sermons—carefully crafted teachings spanning decades, 
+                | with some dating back to the 1980s. These sermons are more than just words on paper; they reflect his deep desire 
+                | to uplift, guide, and offer hope to others.
+
+              p.mb-4
+                | As I work through this collection, I'm reconnecting with who he was and the values he held dear. 
+                | This project is a labor of love; an effort to preserve his legacy and share his wisdom 
+                | with those who knew him and those who never had the chance to meet him.
+
+              p
+                | Samuel was always willing to help others, and it feels fitting that his words might continue to 
+                | offer comfort, insight, and spiritual guidance, just as they did during his lifetime.
+
+      // Help With Transcriptions Card
+      .card.border-0.shadow-sm.rounded-3.overflow-hidden.mb-4
+        .card-header.py-3.bg-light.border-0
+          h3.fw-bold.m-0(style="color: #00274d;") 
+            i.material-icons.me-2.align-text-bottom edit_document
+            | Help With Transcriptions
+
+        .card-body.p-4
+          .row.align-items-center
+            .col-md-8
+              p.mb-4
+                | If you would like to help preserve Samuel's teachings, consider transcribing one of his sermons. 
+                | Many of these documents are handwritten or typed on paper that is aging, and digital transcriptions 
+                | will help ensure their message lives on for future generations.
+                
+              p
+                | If you feel called to contribute to this project, please email your transcriptions to the address below. 
+                | Your help in preserving this spiritual legacy would be deeply appreciated.
+              
+            .col-md-4.text-center.mt-4.mt-md-0
+              .d-inline-block.p-4.rounded-circle.bg-light.mb-3
+                i.material-icons(style="font-size: 3rem; color: #00274d;") mail_outline
+              
+              .d-block.mb-3
+                a.btn.btn-primary.btn-lg(href='mailto:transcribe@samuelsermons.com' style="background-color: #00274d; border-color: #00274d;")
+                  i.material-icons.me-2 email
+                  | Email Transcriptions
