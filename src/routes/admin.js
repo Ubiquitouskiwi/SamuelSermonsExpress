@@ -114,6 +114,35 @@ router.post('/users/:id/activate', requireRole('admin'), async (req, res) => {
   res.redirect('/admin/users');
 });
 
+// Reset user password (admin only)
+router.post('/users/:id/reset-password', requireRole('admin'), async (req, res) => {
+  const userId = parseInt(req.params.id, 10);
+  const { new_password } = req.body;
+  try {
+    if (!new_password || new_password.length < 8) {
+      const result = await pool.query(
+        'SELECT id, email, display_name, role, is_active, must_change_password FROM users WHERE id = $1',
+        [userId]
+      );
+      return res.render('admin/user-edit', { editUser: result.rows[0], error: 'Password must be at least 8 characters.', success: null });
+    }
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash(new_password, 12);
+    await pool.query(
+      'UPDATE users SET password_hash = $1, must_change_password = true, updated_at = NOW() WHERE id = $2',
+      [hash, userId]
+    );
+    const result = await pool.query(
+      'SELECT id, email, display_name, role, is_active, must_change_password FROM users WHERE id = $1',
+      [userId]
+    );
+    res.render('admin/user-edit', { editUser: result.rows[0], error: null, success: 'Password reset. User will be required to change it on next login.' });
+  } catch (err) {
+    console.error('Reset password error:', err);
+    res.redirect('/admin/users/' + userId + '/edit');
+  }
+});
+
 // ==========================================================================
 // Sermon Management (admin + uploader)
 // ==========================================================================

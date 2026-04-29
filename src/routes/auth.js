@@ -70,21 +70,21 @@ router.post('/logout', (req, res) => {
 
 // --- Change Password ---
 router.get('/change-password', requireLogin, (req, res) => {
-  res.render('auth/change-password', { error: null, forced: res.locals.currentUser && res.locals.currentUser.must_change_password });
+  const forced = res.locals.currentUser && res.locals.currentUser.must_change_password;
+  res.render('auth/change-password', { error: null, forced });
 });
 
 router.post(
   '/change-password',
   requireLogin,
-  body('current_password').notEmpty().withMessage('Current password is required.'),
   body('new_password').isLength({ min: 8 }).withMessage('New password must be at least 8 characters.'),
   body('confirm_password').custom((val, { req }) => {
     if (val !== req.body.new_password) throw new Error('Passwords do not match.');
     return true;
   }),
   async (req, res) => {
-    const errors = validationResult(req);
     const forced = res.locals.currentUser && res.locals.currentUser.must_change_password;
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.render('auth/change-password', {
         error: errors.array().map((e) => e.msg).join(' '),
@@ -92,18 +92,23 @@ router.post(
       });
     }
     try {
-      const result = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.session.userId]);
-      const user = result.rows[0];
-      const match = await bcrypt.compare(req.body.current_password, user.password_hash);
-      if (!match) {
-        return res.render('auth/change-password', { error: 'Current password is incorrect.', forced });
+      // If not a forced change, require current password
+      if (!forced) {
+        if (!req.body.current_password) {
+          return res.render('auth/change-password', { error: 'Current password is required.', forced });
+        }
+        const result = await pool.query('SELECT password_hash FROM users WHERE id = $1', [req.session.userId]);
+        const match = await bcrypt.compare(req.body.current_password, result.rows[0].password_hash);
+        if (!match) {
+          return res.render('auth/change-password', { error: 'Current password is incorrect.', forced });
+        }
       }
       const hash = await bcrypt.hash(req.body.new_password, 12);
       await pool.query(
         'UPDATE users SET password_hash = $1, must_change_password = false, updated_at = NOW() WHERE id = $2',
         [hash, req.session.userId]
       );
-      req.session.showWelcome = true; // Trigger welcome after password change
+      req.session.showWelcome = true;
       res.redirect('/admin');
     } catch (err) {
       console.error('Change password error:', err);

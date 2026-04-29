@@ -59,6 +59,23 @@
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
+  margin-inline: auto;
+}
+
+/* Break admin tables out of narrow container */
+.section:has(.admin-table) {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 0 var(--space-lg);
+}
+
+.section:has(.admin-toolbar) .admin-toolbar {
+  max-width: var(--max-width-wide);
+  margin-inline: auto;
 }
 
 .admin-table th,

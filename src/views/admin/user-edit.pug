@@ -46,3 +46,17 @@ block content
         button.btn.btn--primary(type='submit') Save Changes
         |  
         a.btn.btn--outline(href='/admin/users') Cancel
+
+  //- Admin password reset
+  hr.divider
+  h2.section-heading Reset User Password
+  .auth-form
+    form(method='POST' action=`/admin/users/${editUser.id}/reset-password`)
+      .form-group
+        label(for='new_password') New Password
+        input#new_password.form-input(type='password' name='new_password' required minlength='8' autocomplete='new-password')
+        small.form-hint At least 8 characters. The user will be required to change it on next login.
+      .form-group
+        button.btn.btn--primary(type='submit') Reset Password
+        |  
+        a.btn.btn--outline(href='/admin/users') Cancel
