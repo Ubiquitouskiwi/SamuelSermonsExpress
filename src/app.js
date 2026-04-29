@@ -26,6 +26,9 @@ var sitemapRouter = require('./routes/sitemap');
 
 var app = express();
 
+// Trust proxy (Cloudflare / reverse proxy)
+app.set('trust proxy', 1);
+
 // View engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -39,9 +42,9 @@ app.use(helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https://starlingtek-samuel-sermons.nyc3.cdn.digitaloceanspaces.com"],
       frameSrc: ["'self'", "https://starlingtek-samuel-sermons.nyc3.cdn.digitaloceanspaces.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", "https://cdn.jsdelivr.net", "https://static.cloudflareinsights.com", "https://*.cloudflare.com"],
       workerSrc: ["'self'", "blob:", "https://cdn.jsdelivr.net"],
-      connectSrc: ["'self'", "data:", "blob:", "https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com", "https://starlingtek-samuel-sermons.nyc3.cdn.digitaloceanspaces.com"],
+      connectSrc: ["'self'", "data:", "blob:", "https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com", "https://starlingtek-samuel-sermons.nyc3.cdn.digitaloceanspaces.com", "https://cloudflareinsights.com"],
     },
   },
 }));

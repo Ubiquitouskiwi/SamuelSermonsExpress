@@ -259,11 +259,11 @@ html(lang="en" data-theme="auto")
         var tourBtn = document.getElementById('welcomeTour');
         var skipBtn = document.getElementById('welcomeSkip');
         var dismissCheck = document.getElementById('welcomeDismiss');
+        if (!tourBtn || !skipBtn) return;
 
         function dismiss(startTour) {
           var shouldDismiss = dismissCheck && dismissCheck.checked;
           if (shouldDismiss || startTour) {
-            // Save to DB via preferences API
             fetch('/api/preferences', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -290,6 +290,7 @@ html(lang="en" data-theme="auto")
         var acceptBtn = document.getElementById('offlineAccept');
         var declineBtn = document.getElementById('offlineDecline');
         if (!offOn || !offOff) return;
+        if (!modal || !acceptBtn || !declineBtn) return;
 
         var isEnabled = localStorage.getItem('offline_mode') === 'true';
 
