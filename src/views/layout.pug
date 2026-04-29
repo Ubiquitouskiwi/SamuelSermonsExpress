@@ -109,7 +109,17 @@ html(lang="en" data-theme="auto")
         block content
 
     //- Offline mode consent modal
+    //- Offline mode consent modal
     #offlineModal.ocr-modal(hidden)
+      .ocr-modal__backdrop
+      .ocr-modal__dialog(role='dialog' aria-labelledby='offlineModalTitle' aria-modal='true')
+        h2#offlineModalTitle.ocr-modal__title Offline Mode
+        p Enabling offline mode will download and cache the site's pages and sermon data so you can browse without an internet connection.
+        p This will use storage on your device (typically a few MB, more if you view many sermon PDFs). Cached data stays until you turn offline mode off.
+        p You can disable this at any time from the settings menu, which will clear the cached data.
+        .ocr-modal__actions
+          button#offlineAccept.btn.btn--primary(type='button') Enable Offline Mode
+          button#offlineDecline.btn.btn--outline(type='button') Not Now
 
     //- Welcome modal for new users
     if showWelcome && currentUser
@@ -134,15 +144,6 @@ html(lang="en" data-theme="auto")
           .ocr-modal__actions
             button#welcomeTour.btn.btn--primary(type='button') Take the Tour
             button#welcomeSkip.btn.btn--outline(type='button') Skip for Now
-      .ocr-modal__backdrop
-      .ocr-modal__dialog(role='dialog' aria-labelledby='offlineModalTitle' aria-modal='true')
-        h2#offlineModalTitle.ocr-modal__title Offline Mode
-        p Enabling offline mode will download and cache the site's pages and sermon data so you can browse without an internet connection.
-        p This will use storage on your device (typically a few MB, more if you view many sermon PDFs). Cached data stays until you turn offline mode off.
-        p You can disable this at any time from the settings menu, which will clear the cached data.
-        .ocr-modal__actions
-          button#offlineAccept.btn.btn--primary(type='button') Enable Offline Mode
-          button#offlineDecline.btn.btn--outline(type='button') Not Now
 
     footer.site-footer
       .container
