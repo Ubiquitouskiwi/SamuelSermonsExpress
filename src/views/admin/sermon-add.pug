@@ -1,0 +1,41 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Upload Sermon
+    hr.divider.divider--center
+
+  .auth-form
+    if error
+      .auth-form__error(role='alert')= error
+    if success
+      .auth-form__success(role='status')= success
+
+    form(method='POST' action='/admin/sermons/add' enctype='multipart/form-data')
+      .form-group
+        label(for='title') Sermon Title
+        input#title.form-input(type='text' name='title' required placeholder='e.g. 152. The Power of Prayer')
+      .form-group
+        label(for='sermon_type') Sermon Type
+        input#sermon_type.form-input(type='text' name='sermon_type' required list='sermonTypeList' placeholder='Type or choose a category')
+        datalist#sermonTypeList
+          each t in sermonTypes
+            option(value=t)
+        small.form-hint Pick an existing type or type a new one.
+      .form-group
+        label(for='collection') Collection
+        select#collection.form-select(name='collection' required)
+          option(value='ordered') Ordered
+          option(value='unordered') Unordered
+      .form-group
+        label(for='stage') Pipeline Stage
+        select#stage.form-select(name='stage')
+          option(value='raw') Raw (just scanned)
+          option(value='processed' selected) Processed (cleaned up)
+      .form-group
+        label(for='pdf') PDF File
+        input#pdf.form-input(type='file' name='pdf' accept='.pdf' required)
+        small.form-hint Max 50MB. PDF files only.
+      .form-group
+        button.btn.btn--primary(type='submit') Upload
+        |  
+        a.btn.btn--outline(href='/admin/sermons') Cancel

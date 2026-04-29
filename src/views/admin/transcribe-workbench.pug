@@ -1,0 +1,113 @@
+extends ../layout
+block content
+  .workbench(data-sermon-id=sermon.id data-pdf-url=sermon.pdf_path)
+    //- Top toolbar
+    .workbench__toolbar
+      .workbench__toolbar-left
+        a.back-link(href='/admin/transcribe') &larr; Back to Queue
+        h1.workbench__title= sermon.title
+      .workbench__toolbar-right
+        button#ocrToggle.btn.btn--small.btn--outline(type='button' title='OCR Assist — read text from the scanned document') OCR Assist
+        label.workbench__status-label(for='statusSelect') Status:
+        select#statusSelect.filter-bar__select(aria-label='Transcription status')
+          option(value='not_started' selected=(sermon.transcription_status === 'not_started')) Not Started
+          option(value='in_progress' selected=(sermon.transcription_status === 'in_progress')) In Progress
+          option(value='needs_review' selected=(sermon.transcription_status === 'needs_review')) Needs Review
+          option(value='complete' selected=(sermon.transcription_status === 'complete')) Complete
+        span#saveIndicator.workbench__save-indicator
+
+    //- OCR consent modal (hidden by default)
+    #ocrModal.ocr-modal(hidden)
+      .ocr-modal__backdrop
+      .ocr-modal__dialog(role='dialog' aria-labelledby='ocrModalTitle' aria-modal='true')
+        h2#ocrModalTitle.ocr-modal__title OCR Assist
+        p This feature is experimental and is meant as a helping hand, not a substitute for manual transcription. Results will vary depending on the quality of the scan.
+        p This tool uses Tesseract.js to read text from the scanned sermon document, right in your browser.
+        p It requires a one-time download of about 15 MB (the OCR engine and English language data). This stays cached in your browser for future use.
+        p Our server is not involved — all processing happens on your machine.
+        p You can remove the OCR data from your browser at any time using the "Remove OCR Data" button in the OCR toolbar.
+        .ocr-modal__actions
+          button#ocrAccept.btn.btn--primary(type='button') Download &amp; Enable
+          button#ocrDecline.btn.btn--outline(type='button') Not Now
+
+    //- OCR toolbar (hidden until engine is ready)
+    #ocrToolbar.ocr-toolbar(hidden)
+      .ocr-toolbar__inner
+        span.ocr-toolbar__label OCR Tools
+        button#ocrSelectRegion.btn.btn--small.btn--accent(type='button') Select Region
+        button#ocrFullPage.btn.btn--small.btn--outline(type='button') Full Page OCR
+        label.ocr-toolbar__quality-label(for='ocrQuality') Quality:
+        select#ocrQuality.filter-bar__select(aria-label='OCR render quality')
+          option(value='1.5') Low (1.5x) — older/slow machines
+          option(value='2' selected) Standard (2x) — most machines
+          option(value='3') High (3x) — modern laptop/desktop
+          option(value='4') Ultra (4x) — powerful machine only
+        span#ocrStatus.ocr-toolbar__status Ready
+        button#ocrRemove.btn.btn--small.btn--outline(type='button' title='Remove cached OCR data from your browser') Remove OCR Data
+
+    //- Quality change warning modal
+    #ocrQualityModal.ocr-modal(hidden)
+      .ocr-modal__backdrop
+      .ocr-modal__dialog(role='dialog' aria-labelledby='ocrQualityTitle' aria-modal='true')
+        h2#ocrQualityTitle.ocr-modal__title OCR Quality Setting
+        p Higher quality renders the PDF at a larger resolution before reading it, which improves accuracy — especially on faded or small text.
+        p The tradeoff is that it uses more memory and takes longer to process. On an older or low-RAM machine, "High" or "Ultra" may cause the browser tab to slow down or freeze briefly during OCR.
+        ul.ocr-modal__list
+          li Low (1.5x) — ~50MB RAM, fast. Good enough for clean typewritten text.
+          li Standard (2x) — ~100MB RAM, balanced. Default for most machines.
+          li High (3x) — ~200MB RAM, slower. Better for faded or small text.
+          li Ultra (4x) — ~350MB RAM, slowest. Best accuracy, needs a capable machine.
+        .ocr-modal__check
+          label.form-checkbox
+            input#ocrQualityDismiss(type='checkbox')
+            |  Don't show this again
+        .ocr-modal__actions
+          button#ocrQualityOk.btn.btn--primary(type='button') Got it
+
+    //- OCR progress bar (shown during download)
+    #ocrProgress.ocr-progress(hidden)
+      .ocr-progress__bar
+        .ocr-progress__fill#ocrProgressFill
+      span#ocrProgressText.ocr-progress__text Downloading OCR engine...
+
+    //- Split pane
+    .workbench__panes
+      //- PDF viewer with selection overlay
+      .workbench__pane.workbench__pane--pdf#pdfPane
+        .workbench__pane-header
+          span PDF Document
+        .workbench__pdf-container
+          iframe#pdfViewer(src=sermon.pdf_path title=`PDF: ${sermon.title}` loading='lazy')
+          canvas#ocrCanvas.ocr-canvas(hidden)
+
+      //- Draggable divider
+      .workbench__divider#paneDivider(role='separator' aria-label='Resize panes' tabindex='0')
+
+      //- Editor pane
+      .workbench__pane.workbench__pane--editor#editorPane
+        .workbench__pane-header
+          span Transcription
+          span#wordCount.workbench__word-count 0 words
+        textarea#transcriptionEditor(
+          placeholder='Start typing the transcription here...'
+          aria-label='Sermon transcription text'
+          spellcheck='true'
+        )= sermon.transcription_text || ''
+
+        //- Notes panel
+        details.workbench__notes
+          summary Notes &amp; Comments
+          textarea#notesEditor(
+            placeholder='Add notes about unclear sections, questions, etc.'
+            aria-label='Transcription notes'
+          )= sermon.transcription_notes || ''
+
+    //- Keyboard shortcut hint
+    .workbench__shortcuts
+      span Ctrl+S to save
+      span | Ctrl+` to switch panes
+      span | Tab to indent
+      span | Auto-saves every 10s
+
+  script(src='/javascripts/workbench.js')
+  script(src='/javascripts/ocr.js')

@@ -1,0 +1,35 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Activity Log
+    hr.divider.divider--center
+    p.page-header__desc All actions across the platform — uploads, edits, transcriptions, reviews.
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    if events.length === 0
+      p.section-desc No activity recorded yet.
+    else
+      table.admin-table
+        thead
+          tr
+            th Event
+            th Details
+            th Sermon
+            th User
+            th Date
+        tbody
+          each e in events
+            tr
+              td
+                span.badge= e.event_type.replace(/_/g, ' ')
+              td.admin-table__truncate(title=e.title)= e.title
+              td
+                if e.sermon_id
+                  a(href=`/sermons/details?id=${e.sermon_id}`)= e.sermon_title || '#' + e.sermon_id
+                else
+                  | —
+              td= e.user_name || '—'
+              td= new Date(e.created_at).toLocaleString()

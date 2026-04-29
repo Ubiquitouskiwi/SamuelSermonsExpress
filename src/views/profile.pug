@@ -1,0 +1,112 @@
+extends layout
+block content
+  header.page-header
+    h1.page-header__title My Profile
+    hr.divider.divider--center
+
+  //- User info + stats
+  section.section
+    .profile-header
+      .profile-header__info
+        h2.profile-header__name= profileUser.display_name
+        p.profile-header__email= profileUser.email
+        .profile-header__roles
+          - var roles = profileUser.role ? profileUser.role.split(',').map(r => r.trim()) : []
+          each r in roles
+            span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
+        p.profile-header__joined Joined #{new Date(profileUser.created_at).toLocaleDateString()}
+      .profile-header__points
+        span.profile-points__number= profileUser.total_points
+        span.profile-points__label points
+
+  //- Stats cards
+  section.section
+    .profile-stats
+      .profile-stat
+        span.profile-stat__number= stats.transcriptions_done || 0
+        span.profile-stat__label Transcriptions
+      .profile-stat
+        span.profile-stat__number= stats.sermons_uploaded || 0
+        span.profile-stat__label Uploads
+      .profile-stat
+        span.profile-stat__number= stats.total_earned || 0
+        span.profile-stat__label Total Points Earned
+
+  //- Earned badges
+  section.section
+    h2.section-heading Badges Earned
+    if badges.length === 0
+      p.section-desc Start transcribing or uploading sermons to earn your first badge.
+    else
+      .badge-grid
+        each b in badges
+          .badge-card.badge-card--earned
+            span.badge-card__icon= b.icon
+            span.badge-card__label= b.label
+            span.badge-card__desc= b.desc
+
+  //- Next badge progress
+  if nextBadge
+    section.section
+      h2.section-heading Next Badge
+      .badge-progress
+        .badge-progress__info
+          span.badge-progress__icon= nextBadge.icon
+          span.badge-progress__label= nextBadge.label
+          span.badge-progress__desc= nextBadge.desc
+        .badge-progress__bar
+          .badge-progress__fill(style=`width: ${Math.min(100, (profileUser.total_points / nextBadge.threshold) * 100)}%`)
+        .badge-progress__text #{profileUser.total_points} / #{nextBadge.threshold} points
+
+  //- All badges reference
+  section.section
+    h2.section-heading All Badges
+    p.section-desc Here's every badge you can earn by contributing to the sermon archive.
+    .badge-grid
+      each b in allBadges
+        .badge-card(class=profileUser.total_points >= b.threshold ? 'badge-card--earned' : 'badge-card--locked')
+          span.badge-card__icon= b.icon
+          span.badge-card__label= b.label
+          span.badge-card__threshold= b.threshold + ' pts'
+          span.badge-card__desc= b.desc
+
+  //- Achievements
+  section.section
+    h2.section-heading Achievements
+    p.section-desc Special achievements earned through your contributions. Competitive badges shift based on who's leading.
+
+    - var competitive = achievements.filter(a => a.category === 'competitive')
+    - var milestones = achievements.filter(a => a.category === 'milestone')
+
+    h3.profile-subheading Leaderboard
+    .badge-grid
+      each a in competitive
+        .badge-card(class=a.earned ? 'badge-card--earned' : 'badge-card--locked')
+          span.badge-card__icon= a.icon
+          span.badge-card__label= a.label
+          if a.earned && a.detail
+            span.badge-card__threshold= a.detail
+          span.badge-card__desc= a.desc
+
+    h3.profile-subheading Milestones
+    .badge-grid
+      each a in milestones
+        .badge-card(class=a.earned ? 'badge-card--earned' : 'badge-card--locked')
+          span.badge-card__icon= a.icon
+          span.badge-card__label= a.label
+          if a.earned && a.detail
+            span.badge-card__threshold= a.detail
+          span.badge-card__desc= a.desc
+
+  //- Point history
+  section.section
+    h2.section-heading Recent Activity
+    if history.length === 0
+      p.section-desc No points earned yet.
+    else
+      .point-history
+        each h in history
+          .point-history__item
+            span.point-history__points +#{h.points}
+            span.point-history__desc= h.description || h.reason
+            time.point-history__date= new Date(h.created_at).toLocaleDateString()

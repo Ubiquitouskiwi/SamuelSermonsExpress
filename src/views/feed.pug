@@ -1,0 +1,58 @@
+extends layout
+block content
+  header.page-header
+    h1.page-header__title Activity Feed
+    hr.divider.divider--center
+    p.page-header__desc Follow the progress of digitizing and transcribing Rev. Samuel Starling's sermon collection.
+
+  section.section
+    .card
+      h2.card__title Subscribe via RSS
+      p Use the link below in your favorite RSS reader (Feedly, Inoreader, Thunderbird, etc.) to get notified when sermons are added, transcribed, or updated.
+      .feed-url
+        code#feedUrl /feed/rss
+        button#copyFeedUrl.btn.btn--small.btn--outline(type='button') Copy Link
+      a.btn.btn--small.btn--accent(href='/feed/rss' target='_blank' rel='noopener noreferrer') Open RSS Feed
+
+  section.section
+    h2.section-heading Recent Activity
+    if events.length === 0
+      p.section-desc No activity yet. Events will appear here as sermons are added and transcribed.
+    else
+      .feed-list
+        each event in events
+          .feed-item
+            .feed-item__icon
+              if event.event_type === 'sermon_added'
+                span +
+              else
+                span ✓
+            .feed-item__content
+              h3.feed-item__title
+                if event.event_type === 'sermon_added'
+                  | Newly Uploaded: #{event.sermon_title || 'New Sermon'}
+                else
+                  | Newly Transcribed: #{event.sermon_title || 'Sermon'}
+              p.feed-item__desc
+                if event.event_type === 'sermon_added'
+                  | A new sermon has been added to the collection.
+                else
+                  | A sermon transcription has been completed and is now available.
+              .feed-item__meta
+                time(datetime=event.created_at)= new Date(event.created_at).toLocaleString()
+                if event.sermon_id
+                  |  — 
+                  a(href=`/sermons/details?id=${event.sermon_id}`) View Sermon
+
+  script.
+    (function() {
+      var btn = document.getElementById('copyFeedUrl');
+      if (!btn) return;
+      btn.addEventListener('click', function() {
+        var url = window.location.origin + '/feed/rss';
+        navigator.clipboard.writeText(url).then(function() {
+          btn.textContent = 'Copied!';
+          setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+        });
+      });
+    })();

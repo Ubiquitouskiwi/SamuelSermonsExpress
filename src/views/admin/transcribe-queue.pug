@@ -1,0 +1,42 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Transcription Queue
+    hr.divider.divider--center
+    p.page-header__desc Pick a sermon to transcribe. Sermons in progress are shown first.
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    table.admin-table
+      thead
+        tr
+          th Title
+          th Type
+          th Status
+          th Transcriber
+          th Last Updated
+          th
+      tbody
+        each sermon in sermons
+          tr
+            td= sermon.title
+            td
+              span.badge= sermon.sermon_type
+            td
+              case sermon.transcription_status
+                when 'not_started'
+                  span.badge Not Started
+                when 'in_progress'
+                  span.badge.badge--special In Progress
+                when 'needs_review'
+                  span.badge.badge--funeral Needs Review
+                when 'complete'
+                  span.badge.badge--sermon Complete
+                default
+                  span.badge= sermon.transcription_status
+            td= sermon.transcriber_name || '—'
+            td= sermon.updated_at ? new Date(sermon.updated_at).toLocaleDateString() : '—'
+            td
+              a.btn.btn--small.btn--primary(href=`/admin/transcribe/${sermon.id}`)= sermon.transcription_status === 'complete' ? 'Review' : 'Transcribe'

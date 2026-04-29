@@ -1,0 +1,224 @@
+/* ==========================================================================
+   Admin — Dashboard, user management, tables
+   ========================================================================== */
+
+/* --- Stats row --- */
+.admin-stats {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2xl);
+}
+
+.admin-stat {
+  flex: 1;
+  min-width: 8rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.admin-stat__number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: var(--space-xs);
+}
+
+.admin-stat__label {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* --- Quick links --- */
+.admin-links {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+/* --- Toolbar --- */
+.admin-toolbar {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+/* --- Data table --- */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table th {
+  background-color: var(--color-surface-alt);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-table__inactive td {
+  opacity: 0.5;
+}
+
+.admin-table__actions {
+  white-space: nowrap;
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* Keep all table cells vertically aligned */
+.admin-table td,
+.admin-table th {
+  vertical-align: middle;
+}
+
+/* Inline forms in action cells */
+.admin-table__actions form {
+  display: inline-flex;
+  margin: 0;
+}
+
+/* Standardize row height */
+.admin-table tbody tr {
+  height: 3rem;
+  max-height: 3rem;
+}
+
+.admin-table tbody td {
+  overflow: hidden;
+}
+
+/* Truncate long text cells with tooltip on hover */
+.admin-table__truncate {
+  max-width: 18rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+/* Tooltip on hover for truncated cells */
+.admin-table__truncate:hover {
+  position: relative;
+}
+
+.admin-table__truncate:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 50;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+  white-space: normal;
+  max-width: 24rem;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+
+/* Prevent the move dropdown from being too wide */
+.admin-table__actions .filter-bar__select {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+  min-width: 0;
+  width: auto;
+}
+
+/* Responsive: scroll on small screens */
+@media (max-width: 50rem) {
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+/* --- Checkbox label --- */
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.form-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-checkbox input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-primary);
+}
+
+/* --- Text muted helper --- */
+.text-muted {
+  color: var(--color-text-secondary);
+}
+
+/* --- Role overflow indicator --- */
+.admin-table__roles {
+  white-space: nowrap;
+}
+
+.admin-table__role-more {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 0.1em 0.4em;
+  margin-left: var(--space-xs);
+  cursor: default;
+  position: relative;
+}
+
+.admin-table__role-more:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 50;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-normal);
+  white-space: normal;
+  min-width: 10rem;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}

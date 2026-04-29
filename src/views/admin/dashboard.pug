@@ -1,0 +1,32 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Dashboard
+    hr.divider.divider--center
+    if currentUser
+      p.page-header__desc Welcome back, #{currentUser.display_name}.
+
+  section.section
+    .admin-stats
+      .admin-stat
+        span.admin-stat__number= stats.sermons
+        span.admin-stat__label Sermons
+      .admin-stat
+        span.admin-stat__number= stats.transcribed
+        span.admin-stat__label Transcribed
+      .admin-stat
+        span.admin-stat__number= stats.users
+        span.admin-stat__label Team Members
+
+  section.section
+    h2.section-heading Quick Links
+    .admin-links
+      a.btn.btn--primary(href='/admin/sermons') Manage Sermons
+      a.btn.btn--accent(href='/admin/transcribe') Transcription Workbench
+      a.btn.btn--outline(href='/admin/reviews') Review Queue
+      a.btn.btn--outline(href='/admin/sermons/add') Upload Sermon
+      if currentUser && currentUser.roles && currentUser.roles.includes('admin')
+        a.btn.btn--outline(href='/admin/users') Manage Users
+        a.btn.btn--outline(href='/admin/activity') Activity Log
+        a.btn.btn--outline(href='/auth/register') Create Account
+      a.btn.btn--outline(href='/auth/change-password') Change My Password

@@ -1,0 +1,35 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Review Queue
+    hr.divider.divider--center
+    p.page-header__desc Sermons awaiting peer review. You can only review sermons you didn't transcribe.
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    if sermons.length === 0
+      .sermon-empty
+        h3.sermon-empty__title No sermons to review
+        p All transcriptions are either in progress or already reviewed.
+    else
+      table.admin-table
+        thead
+          tr
+            th Title
+            th Type
+            th Transcriber
+            th Updated
+            th
+        tbody
+          each sermon in sermons
+            tr
+              td.admin-table__truncate(title=sermon.title)= sermon.title
+              td
+                span.badge= sermon.sermon_type
+              td= sermon.transcriber_name || '—'
+              td= sermon.updated_at ? new Date(sermon.updated_at).toLocaleDateString() : '—'
+              td.admin-table__actions
+                form(method='POST' action=`/admin/reviews/${sermon.id}/claim`)
+                  button.btn.btn--small.btn--primary(type='submit') Review

@@ -3,19 +3,30 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node  ./src/bin/www",
+    "start": "node ./src/bin/www",
     "devstart": "nodemon ./src/bin/www",
-    "devserver": "SET DEBUG=samuel-sermons-express:* & npm run devstart"
+    "devserver": "SET DEBUG=samuel-sermons-express:* & npm run devstart",
+    "db:migrate": "node src/db/migrate.js",
+    "db:seed": "node src/db/seed.js",
+    "db:setup": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1038.0",
+    "bcryptjs": "^3.0.3",
+    "connect-pg-simple": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "debug": "^2.6.9",
     "dotenv": "^17.0.0",
     "express": "^4.21.1",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^8.4.1",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.1.0",
     "http-errors": "^1.8.1",
     "morgan": "^1.10.0",
-    "orm": "^8.0.0",
+    "multer": "^2.1.1",
+    "pg": "^8.20.0",
     "pug": "^3.0.3"
   },
   "devDependencies": {

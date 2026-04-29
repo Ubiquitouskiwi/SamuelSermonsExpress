@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Activity Feed
+   ========================================================================== */
+
+.feed-url {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.feed-url code {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.feed-item {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.feed-item:last-child {
+  border-bottom: none;
+}
+
+.feed-item__icon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+}
+
+.feed-item__content {
+  min-width: 0;
+  flex: 1;
+}
+
+.feed-item__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+}
+
+.feed-item__desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.feed-item__meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}

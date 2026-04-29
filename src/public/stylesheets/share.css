@@ -1,0 +1,45 @@
+/* ==========================================================================
+   Share Popup
+   ========================================================================== */
+
+.share-popup {
+  z-index: 300;
+}
+
+.share-popup[hidden] {
+  display: none;
+}
+
+.share-popup__inner {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  min-width: 10rem;
+}
+
+.share-popup__item {
+  display: block;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background-color var(--transition-fast);
+}
+
+.share-popup__item:hover {
+  background-color: var(--color-surface-alt);
+  color: var(--color-primary);
+}
+
+.share-popup__item + .share-popup__item {
+  border-top: 1px solid var(--color-border);
+}

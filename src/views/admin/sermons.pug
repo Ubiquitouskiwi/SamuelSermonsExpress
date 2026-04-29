@@ -1,0 +1,45 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Sermon Management
+    hr.divider.divider--center
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--primary(href='/admin/sermons/add') Upload Sermon
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    table.admin-table
+      thead
+        tr
+          th ID
+          th Title
+          th Type
+          th Collection
+          th Stage
+          th Transcription
+          th Actions
+      tbody
+        each sermon in sermons
+          tr
+            td= sermon.id
+            td.admin-table__truncate(title=sermon.title)= sermon.title
+            td
+              span.badge= sermon.sermon_type
+            td= sermon.collection
+            td
+              span.badge(class=sermon.stage === 'final' ? 'badge--sermon' : sermon.stage === 'transcribed' ? 'badge--special' : 'badge--funeral')= sermon.stage
+            td
+              span.badge(class=sermon.transcription_status === 'complete' ? 'badge--sermon' : sermon.transcription_status === 'in_progress' ? 'badge--special' : '')= sermon.transcription_status
+            td.admin-table__actions
+              a.btn.btn--small.btn--outline(href=`/admin/sermons/${sermon.id}/edit`) Edit
+              form(method='POST' action=`/admin/sermons/${sermon.id}/move`)
+                select.filter-bar__select(name='new_stage' aria-label='Move to stage')
+                  option(value='raw' selected=(sermon.stage === 'raw')) Raw
+                  option(value='processed' selected=(sermon.stage === 'processed')) Processed
+                  option(value='transcribed' selected=(sermon.stage === 'transcribed')) Transcribed
+                  option(value='final' selected=(sermon.stage === 'final')) Final
+                button.btn.btn--small.btn--outline(type='submit') Move
+              if currentUser && currentUser.roles && currentUser.roles.includes('admin')
+                form(method='POST' action=`/admin/sermons/${sermon.id}/delete` onsubmit='return confirm("Delete this sermon?")')
+                  button.btn.btn--small.btn--outline(type='submit') Delete

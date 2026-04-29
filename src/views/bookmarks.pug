@@ -1,0 +1,24 @@
+extends layout
+block content
+  header.page-header
+    h1.page-header__title Saved Sermons
+    hr.divider.divider--center
+    p.page-header__desc Your bookmarked sermons and saved highlights. All data is stored in your browser.
+
+  section.section
+    h2.section-heading Bookmarked Sermons
+    #bookmarkList.bookmark-list
+      p.section-desc Loading...
+
+  section.section
+    h2.section-heading Saved Highlights
+    p.section-desc Select text on any sermon detail page to save a passage, like highlighting a verse in a Bible.
+    #highlightList.highlight-list
+      p.section-desc Loading...
+
+  section.section
+    .admin-toolbar
+      button#clearBookmarks.btn.btn--small.btn--outline(type='button') Clear All Bookmarks
+      button#clearHighlights.btn.btn--small.btn--outline(type='button') Clear All Highlights
+
+  script(src='/javascripts/bookmarks-page.js')

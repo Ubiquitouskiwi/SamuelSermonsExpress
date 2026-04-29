@@ -1,0 +1,58 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title User Management
+    hr.divider.divider--center
+    p.page-header__desc Manage team members, roles, and account status.
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--primary(href='/auth/register') Create Account
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    table.admin-table
+      thead
+        tr
+          th Name
+          th Email
+          th Role
+          th Status
+          th Login
+          th Actions
+      tbody
+        each user in users
+          tr(class=user.is_active ? '' : 'admin-table__inactive')
+            td.admin-table__truncate(title=user.display_name)= user.display_name
+            td.admin-table__truncate(title=user.email)= user.email
+            td.admin-table__roles
+              - var roles = user.role ? user.role.split(',').map(r => r.trim()) : []
+              - var roleOrder = ['admin', 'developer', 'uploader', 'transcriber']
+              - roles.sort((a, b) => roleOrder.indexOf(a) - roleOrder.indexOf(b))
+              if roles.length > 0
+                span.badge(class=roles[0] === 'admin' ? 'badge--sermon' : roles[0] === 'transcriber' ? 'badge--special' : 'badge--funeral')= roles[0]
+              if roles.length > 1
+                span.admin-table__role-more(title=roles.join(', ')) +#{roles.length - 1}
+            td
+              if user.is_active
+                if user.must_change_password
+                  span.badge.badge--special(title='Must change password') PW
+                else
+                  span.badge.badge--sermon ✓
+              else
+                span.badge ✕
+            td
+              if user.last_login_at
+                = new Date(user.last_login_at).toLocaleDateString()
+              else
+                span.text-muted —
+            td.admin-table__actions
+              a.btn.btn--small.btn--outline(href=`/admin/users/${user.id}/edit` title='Edit user') ✎
+              if user.is_active && !user.must_change_password
+                form(method='POST' action=`/admin/users/${user.id}/require-password-change`)
+                  button.btn.btn--small.btn--outline(type='submit' title='Require password change on next login') ↻
+              if user.is_active
+                form(method='POST' action=`/admin/users/${user.id}/deactivate`)
+                  button.btn.btn--small.btn--outline(type='submit' title='Deactivate account') ⊘
+              else
+                form(method='POST' action=`/admin/users/${user.id}/activate`)
+                  button.btn.btn--small.btn--outline(type='submit' title='Reactivate account') ✓

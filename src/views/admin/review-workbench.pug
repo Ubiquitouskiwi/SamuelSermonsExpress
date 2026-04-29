@@ -1,0 +1,96 @@
+extends ../layout
+block content
+  .workbench.workbench--review(data-sermon-id=sermon.id)
+    //- Toolbar
+    .workbench__toolbar
+      .workbench__toolbar-left
+        a.back-link(href='/admin/reviews') &larr; Back to Queue
+        h1.workbench__title Review: #{sermon.title}
+        if sermon.transcriber_name
+          span.workbench__meta Transcribed by #{sermon.transcriber_name}
+      .workbench__toolbar-right
+        form(method='POST' action=`/admin/reviews/${reviewId}/approve` style='display:inline')
+          input(type='hidden' name='sermon_id' value=sermon.id)
+          button.btn.btn--small.btn--primary(type='submit' onclick='return confirm("Approve this transcription?")') Approve
+        form(method='POST' action=`/admin/reviews/${reviewId}/request-changes` style='display:inline')
+          input(type='hidden' name='sermon_id' value=sermon.id)
+          button.btn.btn--small.btn--outline(type='submit' onclick='return confirm("Send back for changes?")') Request Changes
+
+    //- Split pane
+    .workbench__panes
+      //- PDF viewer
+      .workbench__pane.workbench__pane--pdf#pdfPane
+        .workbench__pane-header
+          span PDF Document
+        .workbench__pdf-container
+          iframe#pdfViewer(src=sermon.pdf_path title=`PDF: ${sermon.title}` loading='lazy')
+
+      //- Divider
+      .workbench__divider#paneDivider(role='separator' aria-label='Resize panes' tabindex='0')
+
+      //- Review pane (read-only text + comments)
+      .workbench__pane.workbench__pane--editor#editorPane
+        .workbench__pane-header
+          span Transcription (Read Only)
+
+        //- Transcription text (read-only, selectable for commenting)
+        .review-text#reviewText
+          if sermon.transcription_text
+            pre.review-text__content= sermon.transcription_text
+          else
+            p.section-desc No transcription text yet.
+
+        //- Comments section
+        .review-comments
+          .review-comments__header
+            h3 Comments
+            span.review-comments__count= comments.length + ' comment' + (comments.length !== 1 ? 's' : '')
+
+          //- Existing comments
+          if comments.length > 0
+            .review-comments__list
+              each c in comments
+                .review-comment(class=c.is_resolved ? 'review-comment--resolved' : '')
+                  .review-comment__header
+                    span.review-comment__author= c.author_name
+                    time.review-comment__date= new Date(c.created_at).toLocaleDateString()
+                    if c.is_resolved
+                      span.badge.badge--sermon Resolved
+                  if c.passage_ref
+                    .review-comment__passage
+                      | Re: "#{c.passage_ref}"
+                  p.review-comment__text= c.comment_text
+                  if !c.is_resolved
+                    form(method='POST' action=`/admin/reviews/comment/${c.id}/resolve`)
+                      input(type='hidden' name='sermon_id' value=sermon.id)
+                      button.btn.btn--small.btn--outline(type='submit') Resolve
+
+          //- Add comment form
+          .review-comments__add
+            form(method='POST' action=`/admin/reviews/${reviewId}/comment`)
+              input(type='hidden' name='sermon_id' value=sermon.id)
+              .form-group
+                label(for='passage_ref') Passage (optional — select text above then paste here)
+                input#passage_ref.form-input(type='text' name='passage_ref' placeholder='e.g. "the grace of God"')
+              .form-group
+                label(for='comment_text') Comment
+                textarea#comment_text.form-input(name='comment_text' required rows='3' placeholder='Describe the issue or suggestion...')
+              button.btn.btn--small.btn--primary(type='submit') Add Comment
+
+    .workbench__shortcuts
+      span Select text in the transcription to reference it in a comment
+
+  script(src='/javascripts/workbench.js')
+  script.
+    // Allow selecting text from the review to auto-fill the passage reference
+    (function() {
+      var reviewText = document.getElementById('reviewText');
+      var passageInput = document.getElementById('passage_ref');
+      if (!reviewText || !passageInput) return;
+      reviewText.addEventListener('mouseup', function() {
+        var sel = window.getSelection().toString().trim();
+        if (sel.length > 2 && sel.length < 500) {
+          passageInput.value = sel;
+        }
+      });
+    })();

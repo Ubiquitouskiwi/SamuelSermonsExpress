@@ -1,0 +1,85 @@
+/* ==========================================================================
+   Print Styles — Clean output for transcriptions
+   ========================================================================== */
+
+@media print {
+  /* Hide non-essential elements */
+  body::before,
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .back-to-top,
+  .back-link,
+  .filter-toolbar,
+  .sermon-card__actions,
+  .sermon-detail__sidebar,
+  .highlight-popup,
+  .share-popup,
+  .workbench__toolbar,
+  .workbench__divider,
+  .workbench__shortcuts,
+  .ocr-toolbar,
+  .ocr-modal,
+  .btn,
+  .hero__actions,
+  .admin-toolbar {
+    display: none !important;
+  }
+
+  /* Reset colors for print */
+  body {
+    color: #000;
+    background: #fff;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* Full width */
+  .container,
+  .sermon-detail,
+  .sermon-grid {
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Sermon detail: just the transcription text */
+  .sermon-detail {
+    display: block;
+  }
+
+  .sermon-detail__viewer iframe {
+    display: none;
+  }
+
+  .sermon-transcription-text {
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+
+  /* Headings */
+  h1, h2, h3 {
+    color: #000;
+    page-break-after: avoid;
+  }
+
+  /* Don't break inside these */
+  .sermon-card,
+  .highlight-item,
+  .review-comment {
+    page-break-inside: avoid;
+  }
+
+  /* Links: show URL */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  a.site-header__brand::after,
+  a.sermon-card__link::after {
+    content: none;
+  }
+}

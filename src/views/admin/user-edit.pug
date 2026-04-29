@@ -1,0 +1,48 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Edit User
+    hr.divider.divider--center
+
+  .auth-form
+    if error
+      .auth-form__error(role='alert')= error
+    if success
+      .auth-form__success(role='status')= success
+
+    form(method='POST' action=`/admin/users/${editUser.id}/edit`)
+      .form-group
+        label(for='email') Email
+        input#email.form-input(type='email' value=editUser.email disabled)
+        small.form-hint Email cannot be changed.
+      .form-group
+        label(for='display_name') Display Name
+        input#display_name.form-input(type='text' name='display_name' value=editUser.display_name required)
+      .form-group
+        label Role(s)
+        - var userRoles = editUser.role ? editUser.role.split(',').map(r => r.trim()) : []
+        .form-checkbox-group
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='admin' checked=userRoles.includes('admin'))
+            |  Admin
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='transcriber' checked=userRoles.includes('transcriber'))
+            |  Transcriber
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='uploader' checked=userRoles.includes('uploader'))
+            |  Uploader
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='developer' checked=userRoles.includes('developer'))
+            |  Developer
+      .form-group
+        label.form-checkbox
+          input(type='checkbox' name='is_active' checked=editUser.is_active)
+          |  Account active
+      .form-group
+        label.form-checkbox
+          input(type='checkbox' name='must_change_password' checked=editUser.must_change_password)
+          |  Require password change on next login
+      .form-group
+        button.btn.btn--primary(type='submit') Save Changes
+        |  
+        a.btn.btn--outline(href='/admin/users') Cancel

@@ -1,48 +1,22 @@
-/* Base styling */
-body {
-  color: #333;
-  min-height: 100vh;
-}
+/* ==========================================================================
+   Samuel's Sermons — Main stylesheet
+   Import order matters: tokens first, then reset, then everything else.
+   ========================================================================== */
 
-/* Card and container styling */
-.mat-card, .card {
-  background-color: rgba(255, 255, 255, 0.9);
-  border: none;
-}
-
-.container {
-  position: relative;
-}
-
-/* Elegant navbar styling */
-.navbar .nav-link {
-  position: relative;
-}
-
-.navbar .nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0.7rem;
-  left: 50%;
-  width: 0;
-  height: 1px;
-  background: #f1c40f;
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-  opacity: 0;
-}
-
-.navbar .nav-link:hover::after {
-  width: 70%;
-  opacity: 1;
-}
-
-.navbar .nav-link:hover {
-  transform: translateY(-2px);
-}
-
-/* Ensure proper Material Icon alignment */
-.material-icons {
-  vertical-align: middle;
-  line-height: 1;
-}
+@import url('tokens.css');
+@import url('reset.css');
+@import url('utilities.css');
+@import url('layout.css');
+@import url('components.css');
+@import url('home.css');
+@import url('sermons.css');
+@import url('about.css');
+@import url('admin.css');
+@import url('workbench.css');
+@import url('feed.css');
+@import url('bookmarks.css');
+@import url('share.css');
+@import url('profile.css');
+@import url('review.css');
+@import url('print.css');
+@import url('tour.css');

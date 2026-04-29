@@ -1,61 +1,366 @@
 doctype html
-html
+html(lang="en" data-theme="auto")
   head
-    // Start Meta Tags
-    title Samuel&apos;s Sermons
+    meta(charset="utf-8")
+    script.
+      (function(){var t=localStorage.getItem('theme');if(!t){var s=document.getElementById('serverPrefs');if(s)try{var p=JSON.parse(s.textContent);t=p.theme}catch(e){}}document.documentElement.setAttribute('data-theme',t||'auto')})();
+    title #{pageTitle ? pageTitle + ' | ' : ''}Samuel&apos;s Sermons
+    link(rel='icon' type='image/svg+xml' href='/favicon.svg')
     meta(name='keywords' content='Samuel Starling Sermons Methodist Church Teachings')
     meta(name='description' content="Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church.")
     meta(name='author' content='Starlingtek, LLC')
-    meta(property='og:title' content='Samuel Sermons | Home')
-    meta(property='og:description' content="Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church.")
+    meta(property='og:title' content=pageTitle ? pageTitle + ' | Samuel Sermons' : 'Samuel Sermons | Home')
+    meta(property='og:description' content=pageDescription || "Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church.")
     meta(property='og:image' content='https://www.samuelsermons.com/images/samuel-sermons-screenshot.png')
     meta(property='og:url' content='https://www.samuelsermons.com')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    // End Meta Tags
-    link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
-
-    // Bootstrap 5 CSS
-    link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC' crossorigin='anonymous')
-    // Fonts
     link(rel='preconnect' href='https://fonts.googleapis.com')
-    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
-    link(href='https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Mrs+Saint+Delafield&display=swap' rel='stylesheet')
-    // Internal CSS
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
+    link(href='https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap' rel='stylesheet')
     link(rel='stylesheet' href='/stylesheets/index.css')
-  body(style="background-color: #f7f5f0; background-image: url('/images/subtle-paper-texture.png'); background-repeat: repeat;")
-    nav.navbar.navbar-expand-lg.sticky-top(style="background-color: #00274d; box-shadow: 0 2px 4px rgba(0,0,0,0.08); z-index: 1030; transition: all 0.3s ease;")
+    link(rel='alternate' type='application/rss+xml' title='Samuel\'s Sermons Activity Feed' href='/feed/rss')
+    if currentUser && currentUser.preferences
+      script#serverPrefs(type='application/json')= JSON.stringify(currentUser.preferences)
+  body
+    a.skip-link(href='#main-content') Skip to main content
+
+    header.site-header
+      .container.site-header__inner
+        a.site-header__brand(href='/')
+          span.brand-mark S
+          span.brand-text Samuel&apos;s Sermons
+        button.site-header__toggle(type='button' aria-label='Toggle navigation' aria-expanded='false' aria-controls='primary-nav') &#9776;
+
+        nav#primary-nav.site-header__nav(aria-label='Primary navigation')
+          //- Public links
+          .site-header__group
+            a.site-header__link(href='/') Home
+            a.site-header__link(href='/sermons') Sermons
+            a.site-header__link(href='/about') About
+            a.site-header__link(href='/bookmarks') Saved
+
+          //- Authenticated links (after divider)
+          if currentUser
+            .site-header__divider(aria-hidden='true')
+            .site-header__group
+              a.site-header__link(href='/admin') Dashboard
+              span.site-header__user= currentUser.display_name
+              form.site-header__logout(method='POST' action='/auth/logout')
+                button.site-header__link(type='submit') Sign Out
+          else
+            .site-header__divider(aria-hidden='true')
+            .site-header__group
+              a.site-header__link(href='/auth/login') Sign In
+
+        //- Settings gear (always visible, opens dropdown)
+        .site-header__settings
+          button#settingsToggle.site-header__gear(type='button' aria-label='Settings' aria-expanded='false' aria-controls='settingsPanel') &#9881;
+          .site-header__settings-panel#settingsPanel(hidden)
+            .settings-panel
+              h3.settings-panel__title Settings
+              //- Theme
+              .settings-panel__item
+                label.settings-panel__label Theme
+                .settings-panel__options
+                  button.settings-panel__btn#themeAuto(type='button') Auto
+                  button.settings-panel__btn#themeLight(type='button') Light
+                  button.settings-panel__btn#themeDark(type='button') Dark
+
+              //- Role-based settings
+              if currentUser
+                if currentUser.roles && currentUser.roles.includes('admin')
+                  hr.settings-panel__divider
+                  .settings-panel__item
+                    label.settings-panel__label Admin
+                    a.settings-panel__link(href='/admin/users') Manage Users
+                    a.settings-panel__link(href='/auth/register') Create Account
+
+                if currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('developer'))
+                  hr.settings-panel__divider
+                  .settings-panel__item
+                    label.settings-panel__label Tools
+                    a.settings-panel__link(href='/feed') Activity Feed
+
+              //- Always show
+              hr.settings-panel__divider
+              .settings-panel__item
+                label.settings-panel__label Offline Mode
+                .settings-panel__options
+                  button.settings-panel__btn#offlineOff(type='button') Off
+                  button.settings-panel__btn#offlineOn(type='button') On
+
+              hr.settings-panel__divider
+              .settings-panel__item
+                label.settings-panel__label Help
+                button.settings-panel__link#tourGeneral(type='button') Site Tour
+                if currentUser
+                  if currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('transcriber'))
+                    button.settings-panel__link#tourTranscriber(type='button') Transcriber Guide
+                  if currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('uploader'))
+                    button.settings-panel__link#tourUploader(type='button') Uploader Guide
+
+              hr.settings-panel__divider
+              .settings-panel__item
+                a.settings-panel__link(href='/profile') My Profile
+                a.settings-panel__link(href='/auth/change-password') Change Password
+
+    main#main-content.site-main
       .container
-        a.navbar-brand.text-logo(href='/' style="color: #f1c40f; font-family: 'Playfair Display', serif; font-size: 1.6rem; letter-spacing: 0.5px; padding: 0.7rem 0;") Samuel&apos;s Sermons
-        button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarText' aria-controls='navbarText' aria-expanded='false' aria-label='Toggle Navigation' style="border: none; padding: 0.5rem;")
-          i.material-icons(style="color: #f1c40f; font-size: 1.8rem;") menu
-        #navbarText.collapse.navbar-collapse
-          ul.navbar-nav.ms-auto.align-items-center
-            li.nav-item.mx-1
-              a.nav-link(href='/' style="color: #f1c40f; letter-spacing: 0.5px; padding: 1rem 0.8rem; margin: 0 0.2rem; transition: all 0.3s ease;") Home
-            li.nav-item.mx-1
-              a.nav-link(href='/sermons' style="color: #f1c40f; letter-spacing: 0.5px; padding: 1rem 0.8rem; margin: 0 0.2rem; transition: all 0.3s ease;") Sermons
-            li.nav-item.mx-1
-              a.nav-link(href='/about' style="color: #f1c40f; letter-spacing: 0.5px; padding: 1rem 0.8rem; margin: 0 0.2rem; transition: all 0.3s ease;") About
-    block content
-    
-    // Updated footer design with developer attribution
-    footer.footer.material-theme
-      .container-fluid.py-3.mt-4.border-top(style="background-color: rgba(255,255,255,0.6); backdrop-filter: blur(5px);")
-        .container
-          .d-flex.flex-column.flex-md-row.justify-content-between.align-items-center
-            .d-flex.align-items-center.mb-3.mb-md-0
-              p.mat-body-1.text-secondary.mb-0 © #{new Date().getFullYear()} Samuel's Sermons
-              span.mx-3.text-secondary |
-              a.text-decoration-none.d-inline-flex.align-items-center(href="mailto:transcribe@samuelsermons.com" style="color: #555;")
-                .mat-icon.me-1.small email
-            
-            // Developer attribution
-            .d-flex.align-items-center
-              p.mat-body-1.text-secondary.mb-0
-                | Made with 
-                i.material-icons.text-danger.small favorite
-                |  by 
-                a.text-decoration-none(href="https://tylerstarling.com" target="_blank" style="color: #555; text-decoration: none; border-bottom: 1px dotted #555;") Tyler Starling
-    
-    // Bootstrap 5 JS Bundle - Add this before the closing body tag
-    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous")
+        block content
+
+    //- Offline mode consent modal
+    #offlineModal.ocr-modal(hidden)
+
+    //- Welcome modal for new users
+    if showWelcome && currentUser
+      #welcomeModal.ocr-modal
+        .ocr-modal__backdrop
+        .ocr-modal__dialog(role='dialog' aria-labelledby='welcomeTitle' aria-modal='true')
+          h2#welcomeTitle.ocr-modal__title Welcome, #{currentUser.display_name}!
+          p Thank you for joining the team to help preserve Rev. Samuel Starling's sermons. Your contribution makes a real difference.
+          if currentUser.roles && currentUser.roles.includes('transcriber')
+            p As a transcriber, you'll be helping digitize handwritten and typewritten sermons so they can be searched and shared with future generations.
+          if currentUser.roles && currentUser.roles.includes('uploader')
+            p As an uploader, you'll be scanning and adding sermon documents to the archive, moving them through the processing pipeline.
+          if currentUser.roles && currentUser.roles.includes('developer')
+            p As a developer, you have access to activity logs and metrics to help keep the platform running smoothly.
+          if currentUser.roles && currentUser.roles.includes('admin')
+            p As an admin, you have full access to manage users, sermons, and all platform features.
+          p Would you like a quick tour to get oriented?
+          .ocr-modal__check
+            label.form-checkbox
+              input#welcomeDismiss(type='checkbox')
+              |  Don't show this again
+          .ocr-modal__actions
+            button#welcomeTour.btn.btn--primary(type='button') Take the Tour
+            button#welcomeSkip.btn.btn--outline(type='button') Skip for Now
+      .ocr-modal__backdrop
+      .ocr-modal__dialog(role='dialog' aria-labelledby='offlineModalTitle' aria-modal='true')
+        h2#offlineModalTitle.ocr-modal__title Offline Mode
+        p Enabling offline mode will download and cache the site's pages and sermon data so you can browse without an internet connection.
+        p This will use storage on your device (typically a few MB, more if you view many sermon PDFs). Cached data stays until you turn offline mode off.
+        p You can disable this at any time from the settings menu, which will clear the cached data.
+        .ocr-modal__actions
+          button#offlineAccept.btn.btn--primary(type='button') Enable Offline Mode
+          button#offlineDecline.btn.btn--outline(type='button') Not Now
+
+    footer.site-footer
+      .container
+        p
+          | &copy; #{new Date().getFullYear()} Samuel&apos;s Sermons
+          span.site-footer__divider |
+          a(href='mailto:transcribe@samuelsermons.com') transcribe@samuelsermons.com
+          span.site-footer__divider |
+          a(href='/feed') Activity Feed
+          span.site-footer__divider |
+          | Made by 
+          a(href='https://tylerstarling.com' target='_blank' rel='noopener noreferrer') Tyler Starling
+
+    //- Mobile nav toggle
+    script.
+      (function() {
+        var toggle = document.querySelector('.site-header__toggle');
+        var nav = document.getElementById('primary-nav');
+        if (toggle && nav) {
+          toggle.addEventListener('click', function() {
+            var open = nav.getAttribute('data-open') === 'true';
+            nav.setAttribute('data-open', !open);
+            toggle.setAttribute('aria-expanded', !open);
+          });
+        }
+      })();
+
+    //- Settings panel toggle + theme controls + preference sync
+    script.
+      (function() {
+        var gear = document.getElementById('settingsToggle');
+        var panel = document.getElementById('settingsPanel');
+        if (!gear || !panel) return;
+
+        // Check if user is logged in (server prefs element exists)
+        var isLoggedIn = !!document.getElementById('serverPrefs');
+
+        function savePreference(key, value) {
+          localStorage.setItem(key, value);
+          if (isLoggedIn) {
+            var body = {};
+            body[key] = value;
+            fetch('/api/preferences', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body),
+            }).catch(function() {});
+          }
+        }
+
+        gear.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var open = panel.hidden;
+          panel.hidden = !open;
+          gear.setAttribute('aria-expanded', open);
+        });
+
+        document.addEventListener('click', function(e) {
+          if (!panel.contains(e.target) && e.target !== gear) {
+            panel.hidden = true;
+            gear.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        panel.addEventListener('click', function(e) { e.stopPropagation(); });
+
+        var btnAuto = document.getElementById('themeAuto');
+        var btnLight = document.getElementById('themeLight');
+        var btnDark = document.getElementById('themeDark');
+
+        function setTheme(t) {
+          document.documentElement.setAttribute('data-theme', t);
+          if (t === 'auto') {
+            localStorage.removeItem('theme');
+            savePreference('theme', 'auto');
+          } else {
+            savePreference('theme', t);
+          }
+          updateActive();
+        }
+
+        function updateActive() {
+          var current = document.documentElement.getAttribute('data-theme') || 'auto';
+          [btnAuto, btnLight, btnDark].forEach(function(b) { b.classList.remove('settings-panel__btn--active'); });
+          if (current === 'auto') btnAuto.classList.add('settings-panel__btn--active');
+          else if (current === 'light') btnLight.classList.add('settings-panel__btn--active');
+          else if (current === 'dark') btnDark.classList.add('settings-panel__btn--active');
+        }
+
+        btnAuto.addEventListener('click', function() { setTheme('auto'); });
+        btnLight.addEventListener('click', function() { setTheme('light'); });
+        btnDark.addEventListener('click', function() { setTheme('dark'); });
+        updateActive();
+
+        // Tour buttons
+        var tourGeneral = document.getElementById('tourGeneral');
+        var tourTranscriber = document.getElementById('tourTranscriber');
+        var tourUploader = document.getElementById('tourUploader');
+        if (tourGeneral) tourGeneral.addEventListener('click', function() { panel.hidden = true; window.SiteTour && window.SiteTour.start('general'); });
+        if (tourTranscriber) tourTranscriber.addEventListener('click', function() { panel.hidden = true; window.SiteTour && window.SiteTour.start('transcriber'); });
+        if (tourUploader) tourUploader.addEventListener('click', function() { panel.hidden = true; window.SiteTour && window.SiteTour.start('uploader'); });
+      })();
+
+    //- Back to top button
+    button.back-to-top#back-to-top(type='button' aria-label='Back to top' data-visible='false') &uarr;
+    script(src='/javascripts/share.js')
+    script(src='/javascripts/tour.js')
+
+    //- Welcome modal logic
+    script.
+      (function() {
+        var modal = document.getElementById('welcomeModal');
+        if (!modal) return;
+        var tourBtn = document.getElementById('welcomeTour');
+        var skipBtn = document.getElementById('welcomeSkip');
+        var dismissCheck = document.getElementById('welcomeDismiss');
+
+        function dismiss(startTour) {
+          var shouldDismiss = dismissCheck && dismissCheck.checked;
+          if (shouldDismiss || startTour) {
+            // Save to DB via preferences API
+            fetch('/api/preferences', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ welcome_dismissed: true }),
+            }).catch(function() {});
+          }
+          modal.style.display = 'none';
+          if (startTour && window.SiteTour) {
+            window.SiteTour.start('general');
+          }
+        }
+
+        tourBtn.addEventListener('click', function() { dismiss(true); });
+        skipBtn.addEventListener('click', function() { dismiss(false); });
+        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', function() { dismiss(false); });
+      })();
+
+    //- Offline mode
+    script.
+      (function() {
+        var offOn = document.getElementById('offlineOn');
+        var offOff = document.getElementById('offlineOff');
+        var modal = document.getElementById('offlineModal');
+        var acceptBtn = document.getElementById('offlineAccept');
+        var declineBtn = document.getElementById('offlineDecline');
+        if (!offOn || !offOff) return;
+
+        var isEnabled = localStorage.getItem('offline_mode') === 'true';
+
+        function updateButtons() {
+          offOn.classList.toggle('settings-panel__btn--active', isEnabled);
+          offOff.classList.toggle('settings-panel__btn--active', !isEnabled);
+        }
+
+        function enableSW() {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(function() {
+              isEnabled = true;
+              localStorage.setItem('offline_mode', 'true');
+              updateButtons();
+            });
+          }
+        }
+
+        function disableSW() {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+              regs.forEach(function(r) { r.unregister(); });
+            });
+            caches.keys().then(function(names) {
+              names.forEach(function(n) { caches.delete(n); });
+            });
+          }
+          isEnabled = false;
+          localStorage.removeItem('offline_mode');
+          updateButtons();
+        }
+
+        offOn.addEventListener('click', function() {
+          if (isEnabled) return;
+          modal.hidden = false;
+          acceptBtn.focus();
+        });
+
+        offOff.addEventListener('click', function() {
+          if (!isEnabled) return;
+          disableSW();
+        });
+
+        acceptBtn.addEventListener('click', function() {
+          modal.hidden = true;
+          enableSW();
+        });
+
+        declineBtn.addEventListener('click', function() {
+          modal.hidden = true;
+        });
+
+        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', function() {
+          modal.hidden = true;
+        });
+
+        // Auto-register if previously enabled
+        if (isEnabled && 'serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js');
+        }
+
+        updateButtons();
+      })();
+    script.
+      (function() {
+        var btn = document.getElementById('back-to-top');
+        if (!btn) return;
+        window.addEventListener('scroll', function() {
+          btn.setAttribute('data-visible', window.scrollY > 400 ? 'true' : 'false');
+        }, { passive: true });
+        btn.addEventListener('click', function() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      })();

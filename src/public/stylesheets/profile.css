@@ -1,0 +1,238 @@
+/* ==========================================================================
+   Profile Page — Points, badges, stats
+   ========================================================================== */
+
+/* --- Header --- */
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.profile-header__name {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-xs);
+}
+
+.profile-header__email {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.profile-header__roles {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+}
+
+.profile-header__joined {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.profile-header__points {
+  text-align: center;
+}
+
+.profile-points__number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.profile-points__label {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- Stats --- */
+.profile-stats {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.profile-stat {
+  flex: 1;
+  min-width: 8rem;
+  text-align: center;
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.profile-stat__number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  line-height: 1;
+  margin-bottom: var(--space-xs);
+}
+
+.profile-stat__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+/* --- Badge grid --- */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--space-md);
+}
+
+.badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-lg) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-surface);
+  transition: border-color var(--transition-fast);
+}
+
+.badge-card--earned {
+  border-color: var(--color-accent);
+}
+
+.badge-card--locked {
+  opacity: 0.4;
+}
+
+.badge-card__icon {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+}
+
+.badge-card__label {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+}
+
+.badge-card__threshold {
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.badge-card__desc {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+}
+
+/* --- Badge progress bar --- */
+.badge-progress {
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+}
+
+.badge-progress__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.badge-progress__icon {
+  font-size: 1.5rem;
+}
+
+.badge-progress__label {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+}
+
+.badge-progress__desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-left: auto;
+}
+
+.badge-progress__bar {
+  height: 8px;
+  background-color: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--space-xs);
+}
+
+.badge-progress__fill {
+  height: 100%;
+  background-color: var(--color-accent);
+  border-radius: 4px;
+  transition: width var(--transition-base);
+}
+
+.badge-progress__text {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+/* --- Point history --- */
+.point-history {
+  display: flex;
+  flex-direction: column;
+}
+
+.point-history__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.point-history__item:last-child {
+  border-bottom: none;
+}
+
+.point-history__points {
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+  min-width: 3rem;
+}
+
+.point-history__desc {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.point-history__date {
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+/* --- Subheadings in profile --- */
+.profile-subheading {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-accent);
+}

@@ -1,0 +1,41 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Create Account
+    hr.divider.divider--center
+    p.page-header__desc Add a new team member with a specific role.
+
+  .auth-form
+    if error
+      .auth-form__error(role='alert')= error
+    if success
+      .auth-form__success(role='status')= success
+
+    form(method='POST' action='/auth/register')
+      .form-group
+        label(for='display_name') Display Name
+        input#display_name.form-input(type='text' name='display_name' required)
+      .form-group
+        label(for='email') Email
+        input#email.form-input(type='email' name='email' required autocomplete='off')
+      .form-group
+        label(for='password') Password
+        input#password.form-input(type='password' name='password' required minlength='8' autocomplete='new-password')
+        small.form-hint At least 8 characters.
+      .form-group
+        label Role(s)
+        .form-checkbox-group
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='transcriber' checked)
+            |  Transcriber — can view and transcribe sermons
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='uploader')
+            |  Uploader — can view and upload sermon scans
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='developer')
+            |  Developer — can view metrics and logs
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='admin')
+            |  Admin — full access to everything
+      .form-group
+        button.btn.btn--primary(type='submit') Create Account

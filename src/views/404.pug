@@ -1,0 +1,11 @@
+extends layout
+block content
+  .sermon-empty(style='padding: var(--space-4xl) 0;')
+    h1.page-header__title Page Not Found
+    hr.divider.divider--center
+    p This page doesn't seem to exist. It may have been moved or the link might be outdated.
+    p Here are some places you might be looking for:
+    .hero__actions(style='margin-top: var(--space-xl);')
+      a.btn.btn--primary(href='/sermons') Browse Sermons
+      a.btn.btn--outline(href='/') Go Home
+      a.btn.btn--outline(href='/about') About This Project

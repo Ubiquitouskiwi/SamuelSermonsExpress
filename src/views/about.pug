@@ -1,70 +1,113 @@
 extends layout
 block content
-  .about-page.material-theme
-    // Hero Header with Background Image (matches the sermons page)
-    .about-hero(style="background-color: #00274d; background-image: url('/images/wv-hills.jpg'); background-size: cover; background-position: center; position: relative;")
-      .overlay(style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 39, 77, 0.8);")
-      .container.py-5.position-relative(style="z-index: 1;")
-        .text-center.py-4
-          h1.display-4.fw-bold.mb-3(style="color: #f1c40f; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);") About Samuel's Sermons
-          p.lead.text-white.opacity-90.mt-3.mx-auto(style="max-width: 800px; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);")
-            | Learn about Rev. Samuel Starling and the mission to preserve his spiritual legacy
+  header.page-header
+    h1.page-header__title About Samuel&apos;s Sermons
+    hr.divider.divider--center
+    p.page-header__desc Learn about Rev. Samuel Starling and the mission to preserve his spiritual legacy
 
-    .container.py-5
-      // About Card with Elegant Design
-      .card.border-0.shadow-sm.rounded-3.overflow-hidden.mb-5
-        .card-body.p-0
-          .row.g-0
-            .col-md-4.text-center.py-5(style="background-color: #f8f9fa;")
-              img.samuel-picture.rounded-3.shadow-sm.mb-4(src='../images/samuel-starling-1.jpg' width='220' alt='Rev. Samuel Starling' style="border: 3px solid #f1c40f;")
-              h3.fw-bold.mb-2(style="color: #00274d;") Rev. Samuel Starling
-              p.text-muted Minister & Spiritual Guide
-              
-            .col-md-8.p-5
-              h2.fw-bold.mb-4(style="color: #00274d; border-left: 4px solid #f1c40f; padding-left: 15px;") Preserving a Legacy
-              
-              p.lead.mb-4
-                | This website is dedicated to the memory of my grandfather, Samuel Starling, a dedicated minister whose 
-                | wisdom, kindness, and spiritual guidance touched countless lives through the Methodist church.
-              
-              p.mb-4
-                | When he passed away, he left behind a treasure trove of sermons—carefully crafted teachings spanning decades, 
-                | with some dating back to the 1980s. These sermons are more than just words on paper; they reflect his deep desire 
-                | to uplift, guide, and offer hope to others.
+  .about-intro
+    img.about-intro__portrait(src='/images/samuel-starling-1.jpg' alt='Portrait of Rev. Samuel Starling' width='220')
+    h2.about-intro__name Rev. Samuel Starling
+    p.about-intro__role Minister &amp; Spiritual Guide
 
-              p.mb-4
-                | As I work through this collection, I'm reconnecting with who he was and the values he held dear. 
-                | This project is a labor of love; an effort to preserve his legacy and share his wisdom 
-                | with those who knew him and those who never had the chance to meet him.
+  section.about-content.section(aria-labelledby="legacy-heading")
+    h2#legacy-heading.section-heading Preserving a Legacy
+    p
+      | This website is dedicated to the memory of my grandfather, Samuel Starling, a dedicated minister whose 
+      | wisdom, kindness, and spiritual guidance touched countless lives through the Methodist church.
+    p
+      | When he passed away, he left behind a treasure trove of sermons—carefully crafted teachings spanning decades, 
+      | with some dating back to the 1980s. These sermons are more than just words on paper; they reflect his deep desire 
+      | to uplift, guide, and offer hope to others.
+    p
+      | As I work through this collection, I'm reconnecting with who he was and the values he held dear. 
+      | This project is a labor of love; an effort to preserve his legacy and share his wisdom 
+      | with those who knew him and those who never had the chance to meet him.
+    p
+      | Samuel was always willing to help others, and it feels fitting that his words might continue to 
+      | offer comfort, insight, and spiritual guidance, just as they did during his lifetime.
 
-              p
-                | Samuel was always willing to help others, and it feels fitting that his words might continue to 
-                | offer comfort, insight, and spiritual guidance, just as they did during his lifetime.
+  section.section(aria-labelledby="transcription-heading")
+    h2#transcription-heading.section-heading Help With Transcriptions
+    .about-cta
+      p
+        | If you would like to help preserve Samuel's teachings, consider transcribing one of his sermons. 
+        | Many of these documents are handwritten or typed on paper that is aging, and digital transcriptions 
+        | will help ensure their message lives on for future generations.
+      p
+        | If you feel called to contribute to this project, please email your transcriptions to the address below. 
+        | Your help in preserving this spiritual legacy would be deeply appreciated.
+      a.btn.btn--accent(href='mailto:transcribe@samuelsermons.com') Email Transcriptions
 
-      // Help With Transcriptions Card
-      .card.border-0.shadow-sm.rounded-3.overflow-hidden.mb-4
-        .card-header.py-3.bg-light.border-0
-          h3.fw-bold.m-0(style="color: #00274d;") 
-            i.material-icons.me-2.align-text-bottom edit_document
-            | Help With Transcriptions
+  section.section(aria-labelledby="whats-new-heading")
+    h2#whats-new-heading.section-heading What&apos;s New
+    p Here's what we've been working on to make this archive better for everyone.
 
-        .card-body.p-4
-          .row.align-items-center
-            .col-md-8
-              p.mb-4
-                | If you would like to help preserve Samuel's teachings, consider transcribing one of his sermons. 
-                | Many of these documents are handwritten or typed on paper that is aging, and digital transcriptions 
-                | will help ensure their message lives on for future generations.
-                
-              p
-                | If you feel called to contribute to this project, please email your transcriptions to the address below. 
-                | Your help in preserving this spiritual legacy would be deeply appreciated.
-              
-            .col-md-4.text-center.mt-4.mt-md-0
-              .d-inline-block.p-4.rounded-circle.bg-light.mb-3
-                i.material-icons(style="font-size: 3rem; color: #00274d;") mail_outline
-              
-              .d-block.mb-3
-                a.btn.btn-primary.btn-lg(href='mailto:transcribe@samuelsermons.com' style="background-color: #00274d; border-color: #00274d;")
-                  i.material-icons.me-2 email
-                  | Email Transcriptions
+    .about-updates
+      .about-update
+        h3 Sermon Collection &amp; Browsing
+        p
+          | The sermons we've scanned so far are stored in a database and displayed in a card grid 
+          | with search, multi-select type filters, and collection toggles. Cards load as you scroll 
+          | so the page stays fast even as the collection grows. Click any card to view the sermon, 
+          | or use the share button to send it to friends via social media, email, or a copied link. 
+          | There are still many more sermons to scan and add — this is an ongoing effort.
+
+      .about-update
+        h3 Bookmark &amp; Highlight Sermons
+        p
+          | Bookmark your favorite sermons and save highlighted passages from transcriptions, 
+          | similar to highlighting verses in a Bible. Everything is saved right in your browser. 
+          | Visit the 
+          a(href='/bookmarks') Saved page
+          |  to see your collection.
+
+      .about-update
+        h3 Light &amp; Dark Mode
+        p
+          | The site supports light, dark, and auto themes. Use the gear icon in the navigation 
+          | to switch. If you're logged in, your preference syncs across devices.
+
+      .about-update
+        h3 Activity Feed
+        p
+          | Follow along as new sermons are uploaded and transcriptions are completed. 
+          | Subscribe via 
+          a(href='/feed') RSS
+          |  to get updates in your favorite reader.
+
+      .about-update
+        h3 Transcription Workbench
+        p
+          | We've built a dedicated tool for transcribing sermons — a side-by-side 
+          | PDF viewer and text editor with auto-save, keyboard shortcuts, and an experimental OCR assist 
+          | feature that tries to read text from the scanned pages. This is helping us digitize the 
+          | collection faster so the sermons become searchable and more accessible. 
+          | If you'd like to help as a transcriber, reach out to 
+          a(href='mailto:admin@samuelsermons.com') admin@samuelsermons.com
+          |  and we'll get you set up.
+
+      .about-update
+        h3 Peer Review
+        p
+          | Completed transcriptions go through a peer review process to ensure accuracy. 
+          | Reviewers can leave inline comments referencing specific passages, approve the work, 
+          | or send it back for corrections — similar to a code review but for sermon text.
+
+      .about-update
+        h3 Points &amp; Achievements
+        p
+          | Contributors earn points for uploading, transcribing, and reviewing sermons. 
+          | Points unlock badges from First Steps all the way up to Samuel's Scribe. 
+          | There are also fun achievements like Sunday Scholar (transcribing on a Sunday), 
+          | Night Owl, streak badges, and competitive leaderboard titles for top contributors. 
+          | Check your progress on your 
+          a(href='/profile') profile page
+          | .
+
+      .about-update
+        h3 What&apos;s Coming Next
+        p
+          | Full-text search across all transcribed sermons, a clean reading mode for typeset text, 
+          | and eventually an AI-powered tool that lets you ask questions about Samuel's teachings 
+          | and get answers drawn directly from his sermons.

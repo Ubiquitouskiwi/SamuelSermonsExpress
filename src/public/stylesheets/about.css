@@ -1,0 +1,85 @@
+/* ==========================================================================
+   About Page
+   ========================================================================== */
+
+.about-intro {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+}
+
+.about-intro__portrait {
+  width: 14rem;
+  height: auto;
+  border-radius: var(--border-radius-lg);
+  border: 3px solid var(--color-accent);
+  margin: 0 auto var(--space-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.about-intro__name {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-xs);
+}
+
+.about-intro__role {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.about-content {
+  max-width: var(--max-width-content);
+}
+
+.about-content p {
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-lg);
+}
+
+.about-content p:last-child {
+  margin-bottom: 0;
+}
+
+.about-cta {
+  margin-top: var(--space-2xl);
+  padding: var(--space-xl);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--border-radius-lg);
+  border-left: 3px solid var(--color-accent);
+}
+
+.about-cta p {
+  margin-bottom: var(--space-lg);
+}
+
+.about-cta p:last-of-type {
+  margin-bottom: var(--space-lg);
+}
+
+/* --- What's New updates --- */
+.about-updates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.about-update {
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-border);
+}
+
+.about-update h3 {
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.about-update p {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
+}
+
+.about-update a {
+  color: var(--color-link);
+}

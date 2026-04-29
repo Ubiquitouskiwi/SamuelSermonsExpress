@@ -1,0 +1,47 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Edit Sermon
+    hr.divider.divider--center
+
+  .auth-form
+    if error
+      .auth-form__error(role='alert')= error
+    if success
+      .auth-form__success(role='status')= success
+
+    form(method='POST' action=`/admin/sermons/${sermon.id}/edit` enctype='multipart/form-data')
+      .form-group
+        label(for='title') Sermon Title
+        input#title.form-input(type='text' name='title' value=sermon.title required)
+      .form-group
+        label(for='sermon_type') Sermon Type
+        input#sermon_type.form-input(type='text' name='sermon_type' required list='sermonTypeList' value=sermon.sermon_type placeholder='Type or choose a category')
+        datalist#sermonTypeList
+          each t in sermonTypes
+            option(value=t)
+        small.form-hint Pick an existing type or type a new one.
+      .form-group
+        label(for='collection') Collection
+        select#collection.form-select(name='collection' required)
+          option(value='ordered' selected=(sermon.collection === 'ordered')) Ordered
+          option(value='unordered' selected=(sermon.collection === 'unordered')) Unordered
+      .form-group
+        label(for='stage') Pipeline Stage
+        select#stage.form-select(name='stage')
+          option(value='raw' selected=(sermon.stage === 'raw')) Raw
+          option(value='processed' selected=(sermon.stage === 'processed')) Processed
+          option(value='transcribed' selected=(sermon.stage === 'transcribed')) Transcribed
+          option(value='final' selected=(sermon.stage === 'final')) Final
+      .form-group
+        label Current PDF
+        p
+          a(href=sermon.pdf_path target='_blank' rel='noopener noreferrer')= sermon.pdf_path
+      .form-group
+        label(for='pdf') Replace PDF (optional)
+        input#pdf.form-input(type='file' name='pdf' accept='.pdf')
+        small.form-hint Leave empty to keep current file.
+      .form-group
+        button.btn.btn--primary(type='submit') Save Changes
+        |  
+        a.btn.btn--outline(href='/admin/sermons') Cancel

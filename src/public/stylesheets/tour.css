@@ -1,0 +1,92 @@
+/* ==========================================================================
+   Guided Tour — Overlay, spotlight, tooltip
+   ========================================================================== */
+
+.tour-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.tour-overlay--active {
+  display: block;
+}
+
+/* Spotlight cutout — sits above the overlay to "punch through" */
+.tour-spotlight {
+  position: absolute;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--color-accent);
+  z-index: 9001;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* Tooltip */
+.tour-tooltip {
+  position: fixed;
+  z-index: 9002;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 0;
+  max-width: 22rem;
+  width: 90vw;
+}
+
+.tour-tooltip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.tour-tooltip__count {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.tour-tooltip__close {
+  background: none;
+  border: none;
+  font-size: var(--text-xl);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.tour-tooltip__close:hover {
+  color: var(--color-text);
+}
+
+.tour-tooltip__body {
+  padding: var(--space-md);
+}
+
+.tour-tooltip__title {
+  font-size: var(--text-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.tour-tooltip__desc {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.tour-tooltip__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
