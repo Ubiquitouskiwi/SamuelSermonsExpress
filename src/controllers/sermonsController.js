@@ -39,7 +39,7 @@ exports.index = asyncHandler(async (req, res) => {
     unorderedSermons = unorderedSermonData.length > 0 ? unorderedSermonData : null;
   }
 
-  res.render('sermons', { orderedSermons, unorderedSermons, pageTitle: 'Sermons' });
+  res.render('sermons', { orderedSermons, unorderedSermons, pageTitle: 'Sermons', pageScreenshot: 'sermons' });
 });
 
 // Display detail page for sermon

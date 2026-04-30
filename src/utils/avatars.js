@@ -60,7 +60,7 @@ const AVATARS = [
   { key: 'comet', emoji: '☄️', label: 'Comet', tier: 'unlock', unlockReq: { type: 'achievement', key: 'streak_30' }, unlockHint: 'Earn the Monthly Devotion streak' },
 
   // --- Creator (one-of-one, only for the site creator) ---
-  { key: 'creator', emoji: 'λ', label: 'Creator', tier: 'creator', creatorEmail: 'developer@samuelsermons.com' },
+  { key: 'creator', emoji: 'λ', label: 'Creator', tier: 'creator', creatorEmail: process.env.CREATOR_EMAIL || '' },
 ];
 
 function getAvatar(key) {
