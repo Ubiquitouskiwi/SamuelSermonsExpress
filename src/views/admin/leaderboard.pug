@@ -1,0 +1,68 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Leaderboard
+    hr.divider.divider--center
+    p.page-header__desc See how the team is doing. Every contribution counts.
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+      input#leaderboardSearch.filter-toolbar__input(type='text' placeholder='Search team members...' style='max-width:16rem;')
+
+    if users.length === 0
+      .sermon-empty
+        h3.sermon-empty__title No activity yet
+        p Points are earned by uploading, transcribing, and reviewing sermons.
+    else
+      .leaderboard-grid#leaderboardGrid
+        each user, idx in users
+          .leaderboard-card(data-name=user.display_name.toLowerCase())
+            .leaderboard-card__rank
+              if idx === 0
+                span.leaderboard-card__medal 🥇
+              else if idx === 1
+                span.leaderboard-card__medal 🥈
+              else if idx === 2
+                span.leaderboard-card__medal 🥉
+              else
+                span.leaderboard-card__number= idx + 1
+            .leaderboard-card__avatar= user.avatarEmoji
+            .leaderboard-card__info
+              h3.leaderboard-card__name
+                a(href=`/profile/${user.id}`)= user.nickname || user.display_name
+              .leaderboard-card__roles
+                - var roles = user.role ? user.role.split(',').map(r => r.trim()) : []
+                each r in roles
+                  span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
+              .leaderboard-card__stats
+                span.leaderboard-card__stat
+                  strong= user.transcriptions
+                  |  transcriptions
+                span.leaderboard-card__stat
+                  strong= user.uploads
+                  |  uploads
+                span.leaderboard-card__stat
+                  strong= user.reviews
+                  |  reviews
+                span.leaderboard-card__stat
+                  strong= Math.round(user.word_count || 0).toLocaleString()
+                  |  words
+            .leaderboard-card__points
+              span.leaderboard-card__points-number= user.total_points
+              span.leaderboard-card__points-label pts
+
+  script.
+    (function() {
+      var search = document.getElementById('leaderboardSearch');
+      var grid = document.getElementById('leaderboardGrid');
+      if (!search || !grid) return;
+      search.addEventListener('input', function() {
+        var q = this.value.toLowerCase().trim();
+        var cards = grid.querySelectorAll('.leaderboard-card');
+        cards.forEach(function(card) {
+          var name = card.getAttribute('data-name');
+          card.style.display = (!q || name.indexOf(q) !== -1) ? '' : 'none';
+        });
+      });
+    })();

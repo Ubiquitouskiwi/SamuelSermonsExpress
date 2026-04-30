@@ -1,0 +1,80 @@
+extends layout
+block content
+  .public-profile
+    .public-profile__header
+      .public-profile__avatar= profileUser.avatarData.emoji
+      h1.public-profile__name= profileUser.nickname || profileUser.display_name
+      .public-profile__roles
+        - var roles = profileUser.role ? profileUser.role.split(',').map(r => r.trim()) : []
+        each r in roles
+          span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
+      if profileUser.bio
+        p.public-profile__bio= profileUser.bio
+      p.public-profile__joined Joined #{new Date(profileUser.created_at).toLocaleDateString()}
+      .public-profile__points
+        span.profile-points__number= profileUser.total_points
+        span.profile-points__label points
+
+      //- Featured badges (shown prominently)
+      if featured && featured.length > 0
+        .public-profile__featured
+          each f in featured
+            .featured-badge(title=f.label)
+              span.featured-badge__icon= f.icon
+              span.featured-badge__label= f.label
+
+    section.section
+      .profile-stats
+        .profile-stat
+          span.profile-stat__number= stats.transcriptions_done || 0
+          span.profile-stat__label Transcriptions
+        .profile-stat
+          span.profile-stat__number= stats.sermons_uploaded || 0
+          span.profile-stat__label Uploads
+        .profile-stat
+          span.profile-stat__number= stats.reviews_done || 0
+          span.profile-stat__label Reviews
+
+    if badges.length > 0
+      section.section
+        .section-heading-row
+          h2.section-heading Badges
+          if badges.length > 4
+            button.expand-toggle(type='button' data-target='publicBadges' aria-expanded='false') Show all
+        .badge-grid#publicBadges(data-truncate='4')
+          each b in badges
+            .badge-card.badge-card--earned
+              span.badge-card__icon= b.icon
+              span.badge-card__label= b.label
+
+    if earned.length > 0
+      section.section
+        .section-heading-row
+          h2.section-heading Achievements
+          if earned.length > 6
+            button.expand-toggle(type='button' data-target='publicAchievements' aria-expanded='false') Show all
+        .badge-grid#publicAchievements(data-truncate='6')
+          each a in earned
+            .badge-card.badge-card--earned
+              span.badge-card__icon= a.icon
+              span.badge-card__label= a.label
+              if a.detail
+                span.badge-card__threshold= a.detail
+
+  script.
+    (function() {
+      document.querySelectorAll('.expand-toggle').forEach(function(btn) {
+        var target = document.getElementById(btn.getAttribute('data-target'));
+        if (!target) return;
+        var limit = parseInt(target.getAttribute('data-truncate')) || 6;
+        var cards = target.querySelectorAll('.badge-card');
+        if (cards.length <= limit) { btn.style.display = 'none'; return; }
+        cards.forEach(function(c, i) { if (i >= limit) c.style.display = 'none'; });
+        btn.addEventListener('click', function() {
+          var expanded = btn.getAttribute('aria-expanded') === 'true';
+          cards.forEach(function(c, i) { if (i >= limit) c.style.display = expanded ? 'none' : ''; });
+          btn.setAttribute('aria-expanded', !expanded);
+          btn.textContent = expanded ? 'Show all' : 'Show less';
+        });
+      });
+    })();

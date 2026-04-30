@@ -239,3 +239,99 @@
   box-shadow: var(--shadow-md);
   pointer-events: none;
 }
+
+/* --- Leaderboard --- */
+.leaderboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.leaderboard-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  transition: border-color var(--transition-fast);
+}
+
+.leaderboard-card:hover {
+  border-color: var(--color-accent);
+}
+
+.leaderboard-card__rank {
+  flex-shrink: 0;
+  width: 2.5rem;
+  text-align: center;
+}
+
+.leaderboard-card__medal {
+  font-size: 1.5rem;
+}
+
+.leaderboard-card__number {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.leaderboard-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.leaderboard-card__name {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-xs);
+}
+
+.leaderboard-card__roles {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+}
+
+.leaderboard-card__stats {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.leaderboard-card__stat strong {
+  color: var(--color-text);
+}
+
+.leaderboard-card__points {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.leaderboard-card__points-number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.leaderboard-card__points-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 40rem) {
+  .leaderboard-card {
+    flex-wrap: wrap;
+  }
+  .leaderboard-card__stats {
+    gap: var(--space-sm);
+  }
+}

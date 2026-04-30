@@ -4,20 +4,66 @@ block content
     h1.page-header__title My Profile
     hr.divider.divider--center
 
-  //- User info + stats
+  //- User info + avatar + edit
   section.section
     .profile-header
+      .public-profile__avatar= profileUser.avatarData.emoji
       .profile-header__info
-        h2.profile-header__name= profileUser.display_name
+        h2.profile-header__name= profileUser.nickname || profileUser.display_name
+        if profileUser.nickname
+          p.profile-header__email= profileUser.display_name
         p.profile-header__email= profileUser.email
+        if profileUser.bio
+          p.public-profile__bio= profileUser.bio
         .profile-header__roles
           - var roles = profileUser.role ? profileUser.role.split(',').map(r => r.trim()) : []
           each r in roles
             span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
         p.profile-header__joined Joined #{new Date(profileUser.created_at).toLocaleDateString()}
+        a.btn.btn--small.btn--outline(href=`/profile/${profileUser.id}`) View Public Profile
       .profile-header__points
         span.profile-points__number= profileUser.total_points
         span.profile-points__label points
+
+  //- Edit profile
+  section.section
+    h2.section-heading Edit Profile
+    .auth-form
+      form(method='POST' action='/profile/edit')
+        .form-group
+          label(for='nickname') Nickname (public display name)
+          input#nickname.form-input(type='text' name='nickname' value=profileUser.nickname || '' maxlength='50' placeholder='Leave blank to use your real name')
+        .form-group
+          label(for='bio') Bio
+          textarea#bio.form-input(name='bio' maxlength='500' rows='3' placeholder='Tell people a bit about yourself...')= profileUser.bio || ''
+        .form-group
+          label Avatar
+          .avatar-grid
+            each a in avatars
+              label.avatar-option(title=a.label class=a.admin ? 'avatar-option--admin' : '')
+                input(type='radio' name='avatar' value=a.key checked=(profileUser.avatar === a.key))
+                span.avatar-option__emoji= a.emoji
+        .form-group
+          button.btn.btn--primary(type='submit') Save Profile
+
+  //- Featured badges selector
+  section.section
+    h2.section-heading Featured Badges
+    p.section-desc Choose up to 3 badges to display on your public profile.
+    if allEarned && allEarned.length > 0
+      form(method='POST' action='/profile/featured')
+        .featured-selector
+          each a in allEarned
+            label.featured-selector__item(title=a.label)
+              - var isChecked = featured && featured.some(f => f.key === a.key)
+              input(type='checkbox' name='featured' value=a.key checked=isChecked)
+              span.featured-selector__emoji= a.icon
+              span.featured-selector__label= a.label
+        small.form-hint Select up to 3. If a competitive badge is lost, a random earned one will take its place.
+        .form-group
+          button.btn.btn--small.btn--primary(type='submit') Save Featured
+    else
+      p.section-desc Earn some badges first, then you can feature them here.
 
   //- Stats cards
   section.section
@@ -60,9 +106,11 @@ block content
 
   //- All badges reference
   section.section
-    h2.section-heading All Badges
+    .section-heading-row
+      h2.section-heading All Badges
+      button.expand-toggle(type='button' data-target='allBadgesGrid' aria-expanded='false') Show all
     p.section-desc Here's every badge you can earn by contributing to the sermon archive.
-    .badge-grid
+    .badge-grid#allBadgesGrid(data-truncate='4')
       each b in allBadges
         .badge-card(class=profileUser.total_points >= b.threshold ? 'badge-card--earned' : 'badge-card--locked')
           span.badge-card__icon= b.icon
@@ -72,30 +120,26 @@ block content
 
   //- Achievements
   section.section
-    h2.section-heading Achievements
-    p.section-desc Special achievements earned through your contributions. Competitive badges shift based on who's leading.
+    .section-heading-row
+      h2.section-heading Achievements
+      button.expand-toggle(type='button' data-target='achievementsGrid' aria-expanded='false') Show all
+    p.section-desc Special achievements earned through your contributions.
 
-    - var competitive = achievements.filter(a => a.category === 'competitive')
-    - var milestones = achievements.filter(a => a.category === 'milestone')
+    - var earned = achievements.filter(a => a.earned)
+    - var locked = achievements.filter(a => !a.earned)
 
-    h3.profile-subheading Leaderboard
-    .badge-grid
-      each a in competitive
-        .badge-card(class=a.earned ? 'badge-card--earned' : 'badge-card--locked')
+    .badge-grid#achievementsGrid(data-truncate='8')
+      each a in earned
+        .badge-card.badge-card--earned
           span.badge-card__icon= a.icon
           span.badge-card__label= a.label
-          if a.earned && a.detail
+          if a.detail
             span.badge-card__threshold= a.detail
           span.badge-card__desc= a.desc
-
-    h3.profile-subheading Milestones
-    .badge-grid
-      each a in milestones
-        .badge-card(class=a.earned ? 'badge-card--earned' : 'badge-card--locked')
+      each a in locked
+        .badge-card.badge-card--locked
           span.badge-card__icon= a.icon
           span.badge-card__label= a.label
-          if a.earned && a.detail
-            span.badge-card__threshold= a.detail
           span.badge-card__desc= a.desc
 
   //- Point history
@@ -110,3 +154,21 @@ block content
             span.point-history__points +#{h.points}
             span.point-history__desc= h.description || h.reason
             time.point-history__date= new Date(h.created_at).toLocaleDateString()
+
+  script.
+    (function() {
+      document.querySelectorAll('.expand-toggle').forEach(function(btn) {
+        var target = document.getElementById(btn.getAttribute('data-target'));
+        if (!target) return;
+        var limit = parseInt(target.getAttribute('data-truncate')) || 6;
+        var cards = target.querySelectorAll('.badge-card');
+        if (cards.length <= limit) { btn.style.display = 'none'; return; }
+        cards.forEach(function(c, i) { if (i >= limit) c.style.display = 'none'; });
+        btn.addEventListener('click', function() {
+          var expanded = btn.getAttribute('aria-expanded') === 'true';
+          cards.forEach(function(c, i) { if (i >= limit) c.style.display = expanded ? 'none' : ''; });
+          btn.setAttribute('aria-expanded', !expanded);
+          btn.textContent = expanded ? 'Show all' : 'Show less';
+        });
+      });
+    })();
