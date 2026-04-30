@@ -467,6 +467,29 @@ router.get('/leaderboard', async (req, res) => {
 });
 
 // ==========================================================================
+// Birthday Messages (admin only)
+// ==========================================================================
+router.get('/birthday-messages', requireRole('admin'), async (req, res) => {
+  const year = req.query.year || new Date().getFullYear();
+  try {
+    const result = await pool.query(
+      'SELECT * FROM birthday_messages ORDER BY created_at DESC'
+    );
+    // Group by year
+    const byYear = {};
+    result.rows.forEach(function(m) {
+      if (!byYear[m.year]) byYear[m.year] = [];
+      byYear[m.year].push(m);
+    });
+    const years = Object.keys(byYear).sort().reverse();
+    res.render('admin/birthday-messages', { byYear, years, pageTitle: 'Birthday Messages' });
+  } catch (err) {
+    console.error('Birthday messages error:', err);
+    res.render('admin/birthday-messages', { byYear: {}, years: [], pageTitle: 'Birthday Messages' });
+  }
+});
+
+// ==========================================================================
 // Admin Activity Log (admin + developer)
 // ==========================================================================
 router.get('/activity', requireRole('admin', 'developer'), async (req, res) => {

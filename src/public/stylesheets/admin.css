@@ -380,3 +380,39 @@
   color: var(--color-accent);
   font-weight: var(--weight-semibold);
 }
+
+/* --- Birthday message cards --- */
+.birthday-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.birthday-message-card {
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--border-radius-lg);
+}
+
+.birthday-message-card__text {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.birthday-message-card__meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.birthday-message-card__author {
+  font-weight: var(--weight-semibold);
+}

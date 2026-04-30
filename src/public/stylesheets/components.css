@@ -367,3 +367,43 @@
 .tooltip[hidden] {
   display: none;
 }
+
+/* --- Birthday memorial popup --- */
+.birthday-dialog {
+  text-align: center;
+  max-width: 26rem;
+}
+
+.birthday-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.birthday-candle {
+  font-size: 1.5rem;
+}
+
+.birthday-date {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-md);
+}
+
+.birthday-dialog p {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-align: left;
+}
+
+.birthday-dialog .form-group {
+  text-align: left;
+}
+
+.birthday-dialog .ocr-modal__actions {
+  justify-content: center;
+}

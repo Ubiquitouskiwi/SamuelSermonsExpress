@@ -148,6 +148,76 @@ html(lang="en" data-theme="auto")
             button#welcomeTour.btn.btn--primary(type='button') Take the Tour
             button#welcomeSkip.btn.btn--outline(type='button') Skip for Now
 
+    //- Birthday memorial popup (May 6th only)
+    #birthdayModal.ocr-modal(hidden)
+      .ocr-modal__backdrop
+      .ocr-modal__dialog.birthday-dialog(role='dialog' aria-labelledby='birthdayTitle' aria-modal='true')
+        .birthday-header
+          span.birthday-candle 🕯️
+          h2#birthdayTitle.ocr-modal__title Remembering Samuel Starling
+          span.birthday-candle 🕯️
+        p.birthday-date May 6, 1940
+        p Today marks the birthday of Rev. Samuel Starling. His wisdom, kindness, and faith continue to touch lives through the sermons preserved here.
+        p If you'd like, leave a short message in his memory. These are collected and cherished by the family.
+        .form-group
+          input#birthdayName.form-input(type='text' placeholder='Your name (optional)' maxlength='100')
+        .form-group
+          textarea#birthdayMessage.form-input(rows='3' placeholder='A birthday wish, a memory, or a word of thanks...' maxlength='2000')
+        .ocr-modal__actions
+          button#birthdaySend.btn.btn--accent(type='button') Send Message
+          button#birthdayDismiss.btn.btn--outline(type='button') Maybe Later
+        #birthdaySuccess.auth-form__success(hidden role='status') Thank you. Your message has been saved.
+
+    //- Birthday popup logic
+    script.
+      (function() {
+        var now = new Date();
+        var month = now.getMonth();
+        var day = now.getDate();
+        if (month !== 4 || day !== 6) return;
+        var year = now.getFullYear();
+        var key = 'birthday_dismissed_' + year;
+        if (localStorage.getItem(key)) return;
+        var modal = document.getElementById('birthdayModal');
+        var sendBtn = document.getElementById('birthdaySend');
+        var dismissBtn = document.getElementById('birthdayDismiss');
+        var nameInput = document.getElementById('birthdayName');
+        var msgInput = document.getElementById('birthdayMessage');
+        var successEl = document.getElementById('birthdaySuccess');
+        if (!modal) return;
+        modal.hidden = false;
+        dismissBtn.addEventListener('click', function() {
+          modal.hidden = true;
+        });
+        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', function() {
+          modal.hidden = true;
+        });
+        sendBtn.addEventListener('click', function() {
+          var msg = msgInput.value.trim();
+          if (!msg) { msgInput.focus(); return; }
+          sendBtn.disabled = true;
+          sendBtn.textContent = 'Sending...';
+          fetch('/birthday/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ author_name: nameInput.value, message: msg }),
+          }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.ok) {
+              successEl.hidden = false;
+              msgInput.value = '';
+              localStorage.setItem(key, 'true');
+              setTimeout(function() { modal.hidden = true; }, 3000);
+            } else {
+              sendBtn.textContent = 'Send Message';
+              sendBtn.disabled = false;
+            }
+          }).catch(function() {
+            sendBtn.textContent = 'Send Message';
+            sendBtn.disabled = false;
+          });
+        });
+      })();
+
     footer.site-footer
       .container
         p

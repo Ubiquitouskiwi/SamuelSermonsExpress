@@ -1,0 +1,28 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Birthday Messages
+    span.birthday-candle 🕯️
+    hr.divider.divider--center
+    p.page-header__desc Messages left in memory of Rev. Samuel Starling on his birthday (May 6th).
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    if years.length === 0
+      .sermon-empty
+        h3.sermon-empty__title No messages yet
+        p Messages will appear here after visitors leave birthday wishes on May 6th.
+    else
+      each year in years
+        h2.section-heading= year
+          span.badge.badge--uploader(style='margin-left: var(--space-sm); vertical-align: middle;')= byYear[year].length + ' messages'
+        .birthday-messages-list
+          each m in byYear[year]
+            .birthday-message-card
+              .birthday-message-card__content
+                blockquote.birthday-message-card__text= m.message
+                .birthday-message-card__meta
+                  span.birthday-message-card__author= m.author_name || 'Anonymous'
+                  time= new Date(m.created_at).toLocaleDateString()
