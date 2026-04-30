@@ -1,0 +1,35 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title My Issues
+    hr.divider.divider--center
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--primary(href='/issues/new') Report New Issue
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    if issues.length === 0
+      .sermon-empty
+        h3.sermon-empty__title No issues reported
+        p You haven't submitted any issues yet.
+    else
+      table.admin-table
+        thead
+          tr
+            th Title
+            th Category
+            th Priority
+            th Status
+            th Submitted
+        tbody
+          each issue in issues
+            tr
+              td.admin-table__truncate(data-tooltip=issue.title)= issue.title
+              td
+                span.badge= issue.category
+              td
+                span.badge(class=issue.priority === 'high' ? 'badge--admin' : issue.priority === 'medium' ? 'badge--uploader' : '')= issue.priority
+              td
+                span.badge(class=issue.status === 'open' ? 'badge--uploader' : issue.status === 'in_progress' ? 'badge--transcriber' : 'badge--user')= issue.status.replace('_', ' ')
+              td= new Date(issue.created_at).toLocaleDateString()

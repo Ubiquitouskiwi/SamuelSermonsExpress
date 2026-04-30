@@ -1,0 +1,37 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Report an Issue
+    hr.divider.divider--center
+    p.page-header__desc Found a bug, have a feature idea, or need help? Let us know.
+
+  .auth-form
+    if error
+      .auth-form__error(role='alert')= error
+    if success
+      .auth-form__success(role='status')= success
+
+    form(method='POST' action='/issues/new')
+      .form-group
+        label(for='category') Category
+        select#category.form-select(name='category' required)
+          option(value='bug') Bug — something isn't working right
+          option(value='feature') Feature Request — an idea for improvement
+          option(value='question') Question — need help with something
+          option(value='other') Other
+      .form-group
+        label(for='priority') Priority
+        select#priority.form-select(name='priority')
+          option(value='low') Low — not urgent
+          option(value='medium' selected) Medium — should be addressed
+          option(value='high') High — blocking my work
+      .form-group
+        label(for='title') Title
+        input#title.form-input(type='text' name='title' required minlength='3' maxlength='255' placeholder='Brief summary of the issue')
+      .form-group
+        label(for='description') Description
+        textarea#description.form-input(name='description' required rows='6' minlength='10' maxlength='5000' placeholder='Describe the issue in detail. What happened? What did you expect? Steps to reproduce?')
+      .form-group
+        button.btn.btn--primary(type='submit') Submit Issue
+        |  
+        a.btn.btn--outline(href='/issues/mine') My Issues

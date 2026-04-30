@@ -70,3 +70,20 @@ block content
           a.btn.btn--outline(href='/admin/users') Users
           a.btn.btn--outline(href='/admin/activity') Activity Log
           a.btn.btn--outline(href='/auth/register') Create Account
+
+    //- Developer tools (developer + admin)
+    if currentUser && currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('developer'))
+      .dashboard-card
+        h3.dashboard-card__title Developer Tools
+        p.dashboard-card__desc Track and resolve reported issues and bugs.
+        .dashboard-card__actions
+          a.btn.btn--primary(href='/issues') Issue Tracker
+          a.btn.btn--outline(href='/admin/activity') Activity Log
+
+    //- Report issue (everyone)
+    .dashboard-card
+      h3.dashboard-card__title Feedback
+      p.dashboard-card__desc Found a bug or have an idea? Let the team know.
+      .dashboard-card__actions
+        a.btn.btn--outline(href='/issues/new') Report Issue
+        a.btn.btn--outline(href='/issues/mine') My Issues

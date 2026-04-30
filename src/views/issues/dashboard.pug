@@ -1,0 +1,58 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Issue Tracker
+    hr.divider.divider--center
+    p.page-header__desc All reported issues across the platform.
+
+  section.section
+    .admin-toolbar
+      a.btn.btn--outline(href='/admin') Back to Dashboard
+
+    if issues.length === 0
+      .sermon-empty
+        h3.sermon-empty__title No issues
+        p No issues have been reported yet.
+    else
+      table.admin-table
+        thead
+          tr
+            th ID
+            th Title
+            th Category
+            th Priority
+            th Status
+            th Reporter
+            th Assigned
+            th Date
+            th Actions
+        tbody
+          each issue in issues
+            tr
+              td= issue.id
+              td.admin-table__truncate(data-tooltip=issue.description)= issue.title
+              td
+                span.badge= issue.category
+              td
+                span.badge(class=issue.priority === 'high' ? 'badge--admin' : issue.priority === 'medium' ? 'badge--uploader' : '')= issue.priority
+              td
+                span.badge(class=issue.status === 'open' ? 'badge--uploader' : issue.status === 'in_progress' ? 'badge--transcriber' : 'badge--user')= issue.status.replace('_', ' ')
+              td= issue.reporter_name || '—'
+              td= issue.assignee_name || '—'
+              td= new Date(issue.created_at).toLocaleDateString()
+              td.admin-table__actions
+                if issue.status !== 'closed'
+                  if !issue.assigned_to
+                    form(method='POST' action=`/issues/${issue.id}/assign`)
+                      button.btn.btn--small.btn--outline(type='submit' data-tooltip='Assign to yourself') Claim
+                  form(method='POST' action=`/issues/${issue.id}/status`)
+                    if issue.status === 'open'
+                      input(type='hidden' name='status' value='in_progress')
+                      button.btn.btn--small.btn--outline(type='submit' data-tooltip='Mark as in progress') Start
+                    else
+                      input(type='hidden' name='status' value='closed')
+                      button.btn.btn--small.btn--primary(type='submit' data-tooltip='Close this issue') Close
+                else
+                  form(method='POST' action=`/issues/${issue.id}/status`)
+                    input(type='hidden' name='status' value='open')
+                    button.btn.btn--small.btn--outline(type='submit' data-tooltip='Reopen this issue') Reopen
