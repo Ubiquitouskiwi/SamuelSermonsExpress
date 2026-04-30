@@ -1,0 +1,36 @@
+extends layout
+block content
+  header.page-header
+    h1.page-header__title Join the Team
+    hr.divider.divider--center
+    p.page-header__desc Help preserve Rev. Samuel Starling's sermons. Fill out the form below and we'll get you set up with an account.
+
+  .auth-form
+    if error
+      .auth-form__error(role='alert')= error
+    if success
+      .auth-form__success(role='status')= success
+
+    form(method='POST' action='/contact')
+      .form-group
+        label(for='name') Your Name
+        input#name.form-input(type='text' name='name' required placeholder='First and last name')
+      .form-group
+        label(for='email') Email
+        input#email.form-input(type='email' name='email' required placeholder='you@example.com')
+      .form-group
+        label(for='role') How would you like to help?
+        select#role.form-select(name='role' required)
+          option(value='transcriber') Transcriber — type up sermons from scanned documents
+          option(value='uploader') Uploader — scan and upload sermon documents
+          option(value='both') Both — transcribe and upload
+          option(value='other') Other — I have a different way to help
+      .form-group
+        label(for='message') Message (optional)
+        textarea#message.form-input(name='message' rows='4' maxlength='1000' placeholder='Tell us a bit about yourself or any questions you have...')
+      .form-group
+        button.btn.btn--primary(type='submit') Send Request
+
+    p.section-desc(style='margin-top: var(--space-lg); text-align: center;')
+      | Already have an account? 
+      a(href='/auth/login') Sign in here

@@ -14,10 +14,10 @@ block content
     form(method='POST' action='/auth/register')
       .form-group
         label(for='display_name') Display Name
-        input#display_name.form-input(type='text' name='display_name' required)
+        input#display_name.form-input(type='text' name='display_name' required value=prefill && prefill.name ? prefill.name : '')
       .form-group
         label(for='email') Email
-        input#email.form-input(type='email' name='email' required autocomplete='off')
+        input#email.form-input(type='email' name='email' required autocomplete='off' value=prefill && prefill.email ? prefill.email : '')
       .form-group
         label(for='password') Password
         input#password.form-input(type='password' name='password' required minlength='8' autocomplete='new-password')

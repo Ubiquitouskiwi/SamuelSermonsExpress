@@ -119,7 +119,11 @@ router.post(
 
 // --- Register (admin-only: admins create accounts for their team) ---
 router.get('/register', requireRole('admin'), (req, res) => {
-  res.render('auth/register', { error: null, success: null });
+  res.render('auth/register', {
+    error: null, success: null,
+    prefill: { name: req.query.name || '', email: req.query.email || '', role: req.query.role || '' },
+    pageTitle: 'Create Account'
+  });
 });
 
 router.post(

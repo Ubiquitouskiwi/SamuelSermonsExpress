@@ -10,6 +10,35 @@ block content
       a.btn.btn--primary(href='/auth/register') Create Account
       a.btn.btn--outline(href='/admin') Back to Dashboard
 
+    //- Pending access requests
+    if requests && requests.length > 0
+      h2.section-heading Access Requests
+        span.badge.badge--uploader(style='margin-left: var(--space-sm); vertical-align: middle;')= requests.length + ' pending'
+      table.admin-table(style='margin-bottom: var(--space-2xl);')
+        thead
+          tr
+            th Name
+            th Email
+            th Role
+            th Message
+            th Submitted
+            th Actions
+        tbody
+          each r in requests
+            tr
+              td= r.name
+              td= r.email
+              td
+                span.badge(class='badge--' + (r.role === 'both' ? 'transcriber' : r.role === 'other' ? 'user' : r.role))= r.role
+              td.admin-table__truncate(data-tooltip=r.message || 'No message')= r.message || '—'
+              td= new Date(r.created_at).toLocaleDateString()
+              td.admin-table__actions
+                form(method='POST' action=`/admin/requests/${r.id}/approve`)
+                  button.btn.btn--small.btn--primary(type='submit' data-tooltip='Approve and create account') ✓ Approve
+                form(method='POST' action=`/admin/requests/${r.id}/deny`)
+                  button.btn.btn--small.btn--outline(type='submit' data-tooltip='Deny this request') ✕ Deny
+
+    h2.section-heading Team Members
     table.admin-table
       thead
         tr

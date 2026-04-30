@@ -18,7 +18,8 @@ block content
 
         .action-stack
           button#bookmarkBtn.btn.btn--accent(type='button' data-sermon-id=sermon.id data-sermon-title=sermon.title) Bookmark
-          a.btn.btn--outline(href=`mailto:transcribe@samuelsermons.com?subject=Sermon Transcription: ${sermon.title}`) Transcribe
+          if currentUser && currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('transcriber'))
+            a.btn.btn--outline(href=`/admin/transcribe/${sermon.id}`) Transcribe
           a.btn.btn--outline(href=sermon.imageLink download=sermon.title) Download PDF
           button.btn.btn--outline.share-trigger(type='button' data-share-url=`/sermons/details?id=${sermon.id}` data-share-title=sermon.title) Share
 
