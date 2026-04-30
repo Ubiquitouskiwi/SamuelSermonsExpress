@@ -426,3 +426,9 @@
   color: var(--color-text-secondary);
   margin-left: var(--space-md);
 }
+
+.ocr-toolbar__divider {
+  color: var(--color-text-secondary);
+  opacity: 0.4;
+  margin: 0 var(--space-xs);
+}

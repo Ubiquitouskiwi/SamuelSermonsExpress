@@ -32,6 +32,8 @@
   var renderedPageCanvas = null;
   var currentScale = 2;
   var pendingScaleChange = null;
+  var currentPage = 1;
+  var totalPages = 1;
 
   var wasLoaded = localStorage.getItem('ocr_engine_loaded') === 'true';
 
@@ -109,12 +111,22 @@
     ocrProgressFill.style.width = '10%';
 
     loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js', function () {
-      loadScript('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs', function () {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs', function () {
         ocrProgressText.textContent = 'Initializing OCR engine...';
         ocrProgressFill.style.width = '30%';
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+
+        // pdf.js loaded via module — access from globalThis
+        var pdfjs = window.pdfjsLib || globalThis.pdfjsLib;
+        if (!pdfjs) {
+          ocrProgressText.textContent = 'PDF library failed to load.';
+          ocrToggle.textContent = 'OCR Assist';
+          ocrToggle.disabled = false;
+          return;
+        }
+        pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
 
         Tesseract.createWorker('eng', 1, {
+          workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
           logger: function (m) {
             if (m.status === 'loading tesseract core') {
               ocrProgressText.textContent = 'Loading OCR core...';
@@ -129,11 +141,17 @@
           },
         }).then(function (w) {
           worker = w;
+          // Set parameters for better typewriter/scanned document recognition
+          return worker.setParameters({
+            tessedit_pageseg_mode: '6',  // Assume uniform block of text
+            tessedit_ocr_engine_mode: '2', // Legacy + LSTM combined
+          });
+        }).then(function () {
           engineReady = true;
           localStorage.setItem('ocr_engine_loaded', 'true');
           ocrProgress.hidden = true;
           ocrToolbar.hidden = false;
-          ocrToggle.hidden = true; // Hide the download button, toolbar is now permanent
+          ocrToggle.hidden = true;
           renderPdfPage(1);
         }).catch(function (err) {
           console.error('OCR init failed:', err);
@@ -145,11 +163,17 @@
     });
   }
 
-  // --- Render PDF page to canvas with grayscale + contrast preprocessing ---
+  // --- Render PDF page to canvas ---
   function renderPdfPage(pageNum) {
-    ocrStatus.textContent = 'Rendering page at ' + currentScale + 'x...';
-    pdfjsLib.getDocument(ocrPdfUrl).promise.then(function (pdf) {
-      return pdf.getPage(pageNum);
+    ocrStatus.textContent = 'Rendering page ' + pageNum + ' at ' + currentScale + 'x...';
+    var pdfjs = window.pdfjsLib || globalThis.pdfjsLib;
+    if (!pdfjs) { ocrStatus.textContent = 'PDF library not available'; return; }
+
+    pdfjs.getDocument(ocrPdfUrl).promise.then(function (pdf) {
+      totalPages = pdf.numPages;
+      currentPage = Math.min(pageNum, totalPages);
+      updatePageInfo();
+      return pdf.getPage(currentPage);
     }).then(function (page) {
       var viewport = page.getViewport({ scale: currentScale });
       var canvas = document.createElement('canvas');
@@ -157,14 +181,11 @@
       canvas.height = viewport.height;
       var ctx = canvas.getContext('2d');
       return page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function () {
-        // Preprocess: convert to grayscale and boost contrast
+        // Light preprocessing: grayscale only (no binarization — image is already crisp)
         var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         var data = imageData.data;
         for (var i = 0; i < data.length; i += 4) {
-          // Grayscale using luminance weights
           var gray = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-          // Contrast boost: stretch toward black or white
-          gray = gray < 128 ? gray * 0.7 : 255 - (255 - gray) * 0.7;
           data[i] = data[i + 1] = data[i + 2] = gray;
         }
         ctx.putImageData(imageData, 0, 0);
@@ -173,20 +194,61 @@
       });
     }).catch(function (err) {
       console.error('PDF render error:', err);
-      ocrStatus.textContent = 'Failed to render PDF';
+      ocrStatus.textContent = 'Failed to render PDF — ' + err.message;
     });
   }
 
   // --- Load external script ---
   function loadScript(src, cb) {
     if (src.includes('tesseract') && window.Tesseract) return cb();
-    if (src.includes('pdfjs') && window.pdfjsLib) return cb();
+    if (src.includes('pdf') && (window.pdfjsLib || globalThis.pdfjsLib)) return cb();
     var s = document.createElement('script');
     s.src = src;
     if (src.endsWith('.mjs')) s.type = 'module';
-    s.onload = cb;
+    s.onload = function() {
+      // For module scripts, wait a tick for globals to be set
+      setTimeout(cb, 100);
+    };
     s.onerror = function () { ocrProgressText.textContent = 'Failed to download library.'; };
     document.head.appendChild(s);
+  }
+
+  // --- Preview (debug: shows what OCR sees) ---
+  var ocrPreview = document.getElementById('ocrPreview');
+  if (ocrPreview) {
+    ocrPreview.addEventListener('click', function () {
+      if (!renderedPageCanvas) {
+        ocrStatus.textContent = 'PDF not rendered yet...';
+        return;
+      }
+      var dataUrl = renderedPageCanvas.toDataURL('image/png');
+      var win = window.open();
+      if (win) {
+        win.document.write('<html><head><title>OCR Preview</title></head><body style="margin:0;background:#333;display:flex;justify-content:center;"><img src="' + dataUrl + '" style="max-width:100%;height:auto;"></body></html>');
+      }
+    });
+  }
+
+  // --- Page navigation ---
+  var ocrPrevPage = document.getElementById('ocrPrevPage');
+  var ocrNextPage = document.getElementById('ocrNextPage');
+  var ocrPageInfo = document.getElementById('ocrPageInfo');
+
+  function updatePageInfo() {
+    if (ocrPageInfo) ocrPageInfo.textContent = 'Page ' + currentPage + '/' + totalPages;
+    if (ocrPrevPage) ocrPrevPage.disabled = currentPage <= 1;
+    if (ocrNextPage) ocrNextPage.disabled = currentPage >= totalPages;
+  }
+
+  if (ocrPrevPage) {
+    ocrPrevPage.addEventListener('click', function () {
+      if (currentPage > 1) renderPdfPage(currentPage - 1);
+    });
+  }
+  if (ocrNextPage) {
+    ocrNextPage.addEventListener('click', function () {
+      if (currentPage < totalPages) renderPdfPage(currentPage + 1);
+    });
   }
 
   // --- Full page OCR ---
@@ -234,9 +296,15 @@
   }
 
   function sizeCanvas() {
-    var container = ocrCanvas.parentElement;
-    ocrCanvas.width = container.clientWidth;
-    ocrCanvas.height = container.clientHeight;
+    var iframe = document.getElementById('pdfViewer');
+    if (iframe) {
+      ocrCanvas.width = iframe.clientWidth;
+      ocrCanvas.height = iframe.clientHeight;
+    } else {
+      var container = ocrCanvas.parentElement;
+      ocrCanvas.width = container.clientWidth;
+      ocrCanvas.height = container.clientHeight;
+    }
   }
 
   ocrCanvas.addEventListener('mousedown', function (e) {
@@ -280,20 +348,55 @@
   function processRegion(x, y, w, h) {
     ocrStatus.textContent = 'Reading selected region...';
     ocrSelectRegion.disabled = true;
+
+    // The overlay canvas covers the PDF container visually.
+    // Map selection coordinates to the rendered PDF canvas coordinates.
     var cw = ocrCanvas.width;
     var ch = ocrCanvas.height;
     var pw = renderedPageCanvas.width;
     var ph = renderedPageCanvas.height;
-    var cropX = Math.round((x / cw) * pw);
-    var cropY = Math.round((y / ch) * ph);
-    var cropW = Math.round((w / cw) * pw);
-    var cropH = Math.round((h / ch) * ph);
+
+    // Maintain aspect ratio — the PDF might not fill the container exactly
+    var containerAspect = cw / ch;
+    var pdfAspect = pw / ph;
+    var scaleX, scaleY, offsetX, offsetY;
+
+    if (pdfAspect > containerAspect) {
+      // PDF is wider — fits width, letterboxed vertically
+      scaleX = pw / cw;
+      scaleY = scaleX;
+      offsetX = 0;
+      offsetY = (ch - (ph / scaleX)) / 2;
+    } else {
+      // PDF is taller — fits height, letterboxed horizontally
+      scaleY = ph / ch;
+      scaleX = scaleY;
+      offsetX = (cw - (pw / scaleY)) / 2;
+      offsetY = 0;
+    }
+
+    // Simple direct mapping (works when PDF fills the container)
+    var cropX = Math.round(Math.max(0, (x / cw) * pw));
+    var cropY = Math.round(Math.max(0, (y / ch) * ph));
+    var cropW = Math.round(Math.min(pw - cropX, (w / cw) * pw));
+    var cropH = Math.round(Math.min(ph - cropY, (h / ch) * ph));
+
+    // Ensure minimum size
+    if (cropW < 10 || cropH < 10) {
+      ocrStatus.textContent = 'Selection too small';
+      ocrSelectRegion.disabled = false;
+      cancelSelection();
+      return;
+    }
 
     var regionCanvas = document.createElement('canvas');
     regionCanvas.width = cropW;
     regionCanvas.height = cropH;
     var ctx = regionCanvas.getContext('2d');
     ctx.drawImage(renderedPageCanvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+
+    // Debug: log what we're sending to OCR
+    console.log('OCR region:', { cw: cw, ch: ch, pw: pw, ph: ph, cropX: cropX, cropY: cropY, cropW: cropW, cropH: cropH });
 
     worker.recognize(regionCanvas).then(function (result) {
       insertAtCursor(result.data.text);

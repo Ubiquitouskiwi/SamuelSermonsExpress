@@ -36,6 +36,11 @@ block content
         span.ocr-toolbar__label OCR Tools
         button#ocrSelectRegion.btn.btn--small.btn--accent(type='button') Select Region
         button#ocrFullPage.btn.btn--small.btn--outline(type='button') Full Page OCR
+        button#ocrPreview.btn.btn--small.btn--outline(type='button' data-tooltip='Show what the OCR engine sees') Preview
+        span.ocr-toolbar__divider |
+        button#ocrPrevPage.btn.btn--small.btn--outline(type='button' data-tooltip='Previous page') ←
+        span#ocrPageInfo.ocr-toolbar__status Page 1
+        button#ocrNextPage.btn.btn--small.btn--outline(type='button' data-tooltip='Next page') →
         label.ocr-toolbar__quality-label(for='ocrQuality') Quality:
         select#ocrQuality.filter-bar__select(aria-label='OCR render quality')
           option(value='1.5') Low (1.5x) — older/slow machines
