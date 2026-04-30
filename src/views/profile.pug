@@ -171,4 +171,16 @@ block content
           btn.textContent = expanded ? 'Show all' : 'Show less';
         });
       });
+
+      // Avatar selector fallback for browsers without :has() support
+      var avatarOptions = document.querySelectorAll('.avatar-option');
+      avatarOptions.forEach(function(opt) {
+        var radio = opt.querySelector('input[type="radio"]');
+        if (!radio) return;
+        if (radio.checked) opt.classList.add('avatar-option--selected');
+        radio.addEventListener('change', function() {
+          avatarOptions.forEach(function(o) { o.classList.remove('avatar-option--selected'); });
+          if (this.checked) opt.classList.add('avatar-option--selected');
+        });
+      });
     })();
