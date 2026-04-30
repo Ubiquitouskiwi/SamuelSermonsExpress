@@ -4,7 +4,7 @@ const pool = require('../db/pool');
 const { requireLogin } = require('../middleware/auth');
 const { getBadges, getNextBadge, getPointHistory, BADGES } = require('../utils/points');
 const { getAchievements } = require('../utils/achievements');
-const { AVATARS, getAvatar, getAvatarsForRole } = require('../utils/avatars');
+const { AVATARS, getAvatar, getAvatarsForUser } = require('../utils/avatars');
 
 /**
  * Resolve featured badges — validate they're still earned, replace lost ones.
@@ -59,7 +59,7 @@ router.get('/', requireLogin, async (req, res) => {
     const featuredKeys = (user.preferences && user.preferences.featured_badges) || [];
     const featured = resolveFeatured(featuredKeys, allEarned);
     const userRoles = user.role ? user.role.split(',').map(r => r.trim()) : [];
-    const availableAvatars = getAvatarsForRole(userRoles);
+    const availableAvatars = getAvatarsForUser(userRoles, badges, achievements, user.email);
 
     res.render('profile', {
       profileUser: user, badges, nextBadge, allBadges: BADGES,

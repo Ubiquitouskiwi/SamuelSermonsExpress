@@ -6,6 +6,20 @@ block content
     if currentUser
       p.page-header__desc Welcome back, #{currentUser.display_name}.
 
+  //- Quick profile card
+  if currentUser
+    .dashboard-profile
+      - var avatarClass = currentUser.avatar === 'creator' ? 'dashboard-profile__avatar--creator' : currentUser.avatar === 'holy_cross' ? 'dashboard-profile__avatar--legendary' : (currentUser.avatarData && currentUser.avatarData.tier === 'admin') ? 'dashboard-profile__avatar--admin' : ''
+      .dashboard-profile__avatar(class=avatarClass)= currentUser.avatarData ? currentUser.avatarData.emoji : '📖'
+      .dashboard-profile__info
+        h2.dashboard-profile__name= currentUser.display_name
+        .dashboard-profile__roles
+          - var roles = currentUser.role ? currentUser.role.split(',').map(r => r.trim()) : []
+          each r in roles
+            span.badge(class='badge--' + r)= r
+        span.dashboard-profile__points= currentUser.total_points + ' points'
+      a.btn.btn--small.btn--outline(href='/profile') View Profile
+
   //- Stats overview
   section.section
     .admin-stats

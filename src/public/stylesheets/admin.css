@@ -376,3 +376,50 @@
   gap: var(--space-sm);
   flex-wrap: wrap;
 }
+
+/* --- Dashboard profile card --- */
+.dashboard-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.dashboard-profile__avatar {
+  font-size: 2.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--color-surface-alt);
+  border: 2px solid var(--color-accent);
+  flex-shrink: 0;
+}
+
+.dashboard-profile__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-profile__name {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-xs);
+}
+
+.dashboard-profile__roles {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-xs);
+}
+
+.dashboard-profile__points {
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  font-weight: var(--weight-semibold);
+}

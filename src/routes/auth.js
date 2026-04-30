@@ -139,7 +139,7 @@ router.post(
     // Collect roles from checkboxes (can be string or array)
     let roles = req.body.roles || [];
     if (typeof roles === 'string') roles = [roles];
-    const validRoles = ['admin', 'transcriber', 'uploader', 'developer'];
+    const validRoles = ['admin', 'transcriber', 'uploader', 'developer', 'user'];
     roles = roles.filter((r) => validRoles.includes(r));
     if (roles.length === 0) {
       return res.render('auth/register', { error: 'Please select at least one role.', success: null });

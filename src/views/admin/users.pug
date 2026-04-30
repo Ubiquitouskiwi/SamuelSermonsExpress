@@ -29,7 +29,7 @@ block content
               - var roleOrder = ['admin', 'developer', 'uploader', 'transcriber']
               - roles.sort((a, b) => roleOrder.indexOf(a) - roleOrder.indexOf(b))
               if roles.length > 0
-                span.badge(class=roles[0] === 'admin' ? 'badge--sermon' : roles[0] === 'transcriber' ? 'badge--special' : 'badge--funeral')= roles[0]
+                span.badge(class='badge--' + roles[0])= roles[0]
               if roles.length > 1
                 span.admin-table__role-more(title=roles.join(', ')) +#{roles.length - 1}
             td

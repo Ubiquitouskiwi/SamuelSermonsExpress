@@ -97,12 +97,14 @@ async function loadUser(req, res, next) {
   if (req.session && req.session.userId) {
     try {
       var result = await pool.query(
-        'SELECT id, email, display_name, role, must_change_password, preferences, total_points FROM users WHERE id = $1 AND is_active = true',
+        'SELECT id, email, display_name, role, must_change_password, preferences, total_points, avatar FROM users WHERE id = $1 AND is_active = true',
         [req.session.userId]
       );
       if (result.rows.length > 0) {
         var user = result.rows[0];
         user.roles = parseRoles(user.role);
+        var { getAvatar } = require('../utils/avatars');
+        user.avatarData = getAvatar(user.avatar);
         res.locals.currentUser = user;
         // Check if we should show the welcome modal
         if (req.session.showWelcome && !(user.preferences && user.preferences.welcome_dismissed)) {

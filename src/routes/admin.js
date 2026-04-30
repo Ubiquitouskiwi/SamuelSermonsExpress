@@ -60,9 +60,9 @@ router.post('/users/:id/edit', requireRole('admin'), async (req, res) => {
   // Collect roles from checkboxes
   let roles = req.body.roles || [];
   if (typeof roles === 'string') roles = [roles];
-  const validRoles = ['admin', 'transcriber', 'uploader', 'developer'];
+  const validRoles = ['admin', 'transcriber', 'uploader', 'developer', 'user'];
   roles = roles.filter((r) => validRoles.includes(r));
-  const roleStr = roles.length > 0 ? roles.join(',') : 'transcriber';
+  const roleStr = roles.length > 0 ? roles.join(',') : 'user';
   try {
     await pool.query(
       `UPDATE users SET display_name = $1, role = $2, is_active = $3, must_change_password = $4, updated_at = NOW() WHERE id = $5`,

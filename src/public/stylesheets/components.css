@@ -95,6 +95,37 @@
   border-color: var(--color-accent);
 }
 
+/* Role badges — each role gets a unique color */
+.badge--admin {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+}
+
+.badge--transcriber {
+  background-color: #059669;
+  color: #ffffff;
+  border-color: #059669;
+}
+
+.badge--uploader {
+  background-color: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+}
+
+.badge--developer {
+  background-color: #0891b2;
+  color: #ffffff;
+  border-color: #0891b2;
+}
+
+.badge--user {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
 /* --- Card --- */
 .card {
   background-color: var(--color-surface);

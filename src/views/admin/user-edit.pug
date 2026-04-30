@@ -34,6 +34,9 @@ block content
           label.form-checkbox
             input(type='checkbox' name='roles' value='developer' checked=userRoles.includes('developer'))
             |  Developer
+          label.form-checkbox
+            input(type='checkbox' name='roles' value='user' checked=userRoles.includes('user'))
+            |  User
       .form-group
         label.form-checkbox
           input(type='checkbox' name='is_active' checked=editUser.is_active)

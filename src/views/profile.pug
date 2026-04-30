@@ -7,7 +7,8 @@ block content
   //- User info + avatar + edit
   section.section
     .profile-header
-      .public-profile__avatar= profileUser.avatarData.emoji
+      - var avatarClass = profileUser.avatar === 'creator' ? 'public-profile__avatar--creator' : profileUser.avatar === 'holy_cross' ? 'public-profile__avatar--legendary' : (profileUser.avatarData && profileUser.avatarData.tier === 'admin') ? 'public-profile__avatar--admin' : ''
+      .public-profile__avatar(class=avatarClass)= profileUser.avatarData.emoji
       .profile-header__info
         h2.profile-header__name= profileUser.nickname || profileUser.display_name
         if profileUser.nickname
@@ -18,7 +19,7 @@ block content
         .profile-header__roles
           - var roles = profileUser.role ? profileUser.role.split(',').map(r => r.trim()) : []
           each r in roles
-            span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
+            span.badge(class='badge--' + r)= r
         p.profile-header__joined Joined #{new Date(profileUser.created_at).toLocaleDateString()}
         a.btn.btn--small.btn--outline(href=`/profile/${profileUser.id}`) View Public Profile
       .profile-header__points
@@ -40,9 +41,15 @@ block content
           label Avatar
           .avatar-grid
             each a in avatars
-              label.avatar-option(title=a.label class=a.admin ? 'avatar-option--admin' : '')
-                input(type='radio' name='avatar' value=a.key checked=(profileUser.avatar === a.key))
-                span.avatar-option__emoji= a.emoji
+              if a.available
+                - var optClass = a.tier === 'admin' ? 'avatar-option--admin' : a.tier === 'legendary' ? 'avatar-option--legendary' : a.tier === 'creator' ? 'avatar-option--creator' : a.tier === 'role' ? 'avatar-option--role-' + a.role : a.tier === 'unlock' ? 'avatar-option--unlock' : ''
+                label.avatar-option(title=a.label class=optClass)
+                  input(type='radio' name='avatar' value=a.key checked=(profileUser.avatar === a.key))
+                  span.avatar-option__emoji= a.emoji
+              else
+                .avatar-option.avatar-option--locked(title=a.unlockHint || 'Locked')
+                  span.avatar-option__emoji= a.emoji
+                  span.avatar-option__lock 🔒
         .form-group
           button.btn.btn--primary(type='submit') Save Profile
 

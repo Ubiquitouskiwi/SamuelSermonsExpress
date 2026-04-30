@@ -2,12 +2,13 @@ extends layout
 block content
   .public-profile
     .public-profile__header
-      .public-profile__avatar= profileUser.avatarData.emoji
+      - var avatarClass = profileUser.avatar === 'creator' ? 'public-profile__avatar--creator' : profileUser.avatar === 'holy_cross' ? 'public-profile__avatar--legendary' : (profileUser.avatarData && profileUser.avatarData.tier === 'admin') ? 'public-profile__avatar--admin' : ''
+    .public-profile__avatar(class=avatarClass)= profileUser.avatarData.emoji
       h1.public-profile__name= profileUser.nickname || profileUser.display_name
       .public-profile__roles
         - var roles = profileUser.role ? profileUser.role.split(',').map(r => r.trim()) : []
         each r in roles
-          span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
+          span.badge(class='badge--' + r)= r
       if profileUser.bio
         p.public-profile__bio= profileUser.bio
       p.public-profile__joined Joined #{new Date(profileUser.created_at).toLocaleDateString()}

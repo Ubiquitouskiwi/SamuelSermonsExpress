@@ -27,14 +27,15 @@ block content
                 span.leaderboard-card__medal 🥉
               else
                 span.leaderboard-card__number= idx + 1
-            .leaderboard-card__avatar= user.avatarEmoji
+            - var lbAvatarClass = user.avatar === 'creator' ? 'leaderboard-card__avatar--creator' : user.avatar === 'holy_cross' ? 'leaderboard-card__avatar--legendary' : ''
+            .leaderboard-card__avatar(class=lbAvatarClass)= user.avatarEmoji
             .leaderboard-card__info
               h3.leaderboard-card__name
                 a(href=`/profile/${user.id}`)= user.nickname || user.display_name
               .leaderboard-card__roles
                 - var roles = user.role ? user.role.split(',').map(r => r.trim()) : []
                 each r in roles
-                  span.badge(class=r === 'admin' ? 'badge--sermon' : r === 'transcriber' ? 'badge--special' : 'badge--funeral')= r
+                  span.badge(class='badge--' + r)= r
               .leaderboard-card__stats
                 span.leaderboard-card__stat
                   strong= user.transcriptions

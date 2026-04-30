@@ -512,3 +512,277 @@
   background: linear-gradient(135deg, rgba(234, 170, 0, 0.1), rgba(234, 170, 0, 0.25));
   box-shadow: 0 0 8px rgba(234, 170, 0, 0.3);
 }
+
+/* --- Locked avatars --- */
+.avatar-option--locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
+  position: relative;
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.avatar-option__lock {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+/* Unlockable (earned) — subtle purple/blue glow */
+.avatar-option--unlock {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(124, 58, 237, 0.12));
+}
+
+.avatar-option--unlock::after {
+  content: '✦';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  font-size: 0.5rem;
+  color: #7c3aed;
+  line-height: 1;
+}
+
+.avatar-option--unlock:has(input:checked),
+.avatar-option--unlock.avatar-option--selected {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(124, 58, 237, 0.2));
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.3);
+}
+
+/* --- Legendary avatar (Holy Cross — the crowning achievement) --- */
+.avatar-option--legendary {
+  border: 2px solid var(--color-accent);
+  background: linear-gradient(135deg, #1a0f00, #3d2800, #1a0f00);
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-option--legendary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(234, 170, 0, 0.3) 45%,
+    rgba(255, 215, 0, 0.5) 50%,
+    rgba(234, 170, 0, 0.3) 55%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+  animation: legendary-shimmer 3s ease-in-out infinite;
+}
+
+.avatar-option--legendary::after {
+  content: '♛';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  font-size: 0.6rem;
+  color: var(--color-accent);
+  text-shadow: 0 0 4px rgba(234, 170, 0, 0.8);
+  line-height: 1;
+}
+
+.avatar-option--legendary .avatar-option__emoji {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 3px rgba(234, 170, 0, 0.6));
+}
+
+.avatar-option--legendary:has(input:checked),
+.avatar-option--legendary.avatar-option--selected {
+  border-color: var(--color-accent);
+  box-shadow:
+    0 0 12px rgba(234, 170, 0, 0.4),
+    0 0 24px rgba(234, 170, 0, 0.2),
+    inset 0 0 8px rgba(234, 170, 0, 0.1);
+}
+
+@keyframes legendary-shimmer {
+  0% { background-position: 200% 200%; }
+  50% { background-position: 0% 0%; }
+  100% { background-position: -200% -200%; }
+}
+
+/* Legendary in the public profile avatar display */
+.public-profile__avatar--legendary {
+  border-color: var(--color-accent);
+  background: linear-gradient(135deg, #1a0f00, #3d2800);
+  box-shadow: 0 0 16px rgba(234, 170, 0, 0.4), 0 0 32px rgba(234, 170, 0, 0.15);
+}
+
+/* ==========================================================================
+   Creator Avatar — One of one. Unmistakable.
+   ========================================================================== */
+
+.avatar-option--creator {
+  position: relative;
+  border: none;
+  background: #0a0a0f;
+  border-radius: var(--border-radius);
+  padding: var(--space-xs);
+  overflow: hidden;
+}
+
+/* Animated prismatic border */
+.avatar-option--creator::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    #ff0080, #ff8c00, #ffd700, #00ff88, #00bfff, #8b5cf6, #ff0080
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: creator-spin 4s linear infinite;
+}
+
+/* Inner cosmic background */
+.avatar-option--creator::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: calc(var(--border-radius) - 2px);
+  background:
+    radial-gradient(circle at 30% 40%, rgba(139, 92, 246, 0.3), transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(0, 191, 255, 0.2), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.1), transparent 70%),
+    #0a0a0f;
+  animation: creator-pulse 3s ease-in-out infinite alternate;
+}
+
+.avatar-option--creator .avatar-option__emoji {
+  position: relative;
+  z-index: 2;
+  font-size: 1.6rem;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.8)) drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
+  animation: creator-float 3s ease-in-out infinite;
+}
+
+.avatar-option--creator:has(input:checked),
+.avatar-option--creator.avatar-option--selected {
+  box-shadow:
+    0 0 15px rgba(255, 215, 0, 0.5),
+    0 0 30px rgba(139, 92, 246, 0.3),
+    0 0 45px rgba(0, 191, 255, 0.2);
+}
+
+@keyframes creator-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes creator-pulse {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+@keyframes creator-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+/* Creator avatar in public profile display */
+.public-profile__avatar--creator {
+  border: none;
+  background: #0a0a0f;
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 0.4),
+    0 0 40px rgba(139, 92, 246, 0.3),
+    0 0 60px rgba(0, 191, 255, 0.15);
+  animation: creator-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes creator-glow {
+  0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(139, 92, 246, 0.3), 0 0 60px rgba(0, 191, 255, 0.15); }
+  100% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), 0 0 50px rgba(139, 92, 246, 0.4), 0 0 75px rgba(0, 191, 255, 0.25); }
+}
+
+/* --- Creator avatar display (everywhere it appears) --- */
+.public-profile__avatar--creator,
+.dashboard-profile__avatar--creator,
+.leaderboard-card__avatar--creator {
+  background: #0a0a0f;
+  border-color: transparent;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 12px rgba(255, 215, 0, 0.4),
+    0 0 24px rgba(139, 92, 246, 0.3),
+    0 0 36px rgba(0, 191, 255, 0.15);
+  animation: creator-glow 3s ease-in-out infinite alternate;
+}
+
+.public-profile__avatar--creator::before,
+.dashboard-profile__avatar--creator::before,
+.leaderboard-card__avatar--creator::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from 0deg, #ff0080, #ff8c00, #ffd700, #00ff88, #00bfff, #8b5cf6, #ff0080);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: creator-spin 4s linear infinite;
+}
+
+/* --- Legendary avatar display (everywhere) --- */
+.public-profile__avatar--legendary,
+.dashboard-profile__avatar--legendary,
+.leaderboard-card__avatar--legendary {
+  border-color: var(--color-accent);
+  background: linear-gradient(135deg, #1a0f00, #3d2800, #1a0f00);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(234, 170, 0, 0.4), 0 0 24px rgba(234, 170, 0, 0.2);
+}
+
+.public-profile__avatar--legendary::before,
+.dashboard-profile__avatar--legendary::before,
+.leaderboard-card__avatar--legendary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(234, 170, 0, 0.3) 45%, rgba(255, 215, 0, 0.5) 50%, rgba(234, 170, 0, 0.3) 55%, transparent 70%);
+  background-size: 200% 200%;
+  animation: legendary-shimmer 3s ease-in-out infinite;
+}
+
+/* --- Admin avatar display (everywhere) --- */
+.public-profile__avatar--admin,
+.dashboard-profile__avatar--admin,
+.leaderboard-card__avatar--admin {
+  border-color: var(--color-accent);
+  background: linear-gradient(135deg, rgba(234, 170, 0, 0.05), rgba(234, 170, 0, 0.15));
+}
+
+/* --- Role-exclusive avatar styling in selector --- */
+.avatar-option--role-developer {
+  border-color: #0891b2;
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.05), rgba(8, 145, 178, 0.12));
+}
+
+.avatar-option--role-transcriber {
+  border-color: #059669;
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.12));
+}
+
+.avatar-option--role-uploader {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(124, 58, 237, 0.12));
+}
