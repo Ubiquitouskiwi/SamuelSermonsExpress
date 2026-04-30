@@ -38,7 +38,11 @@ block content
                 form(method='POST' action=`/admin/requests/${r.id}/deny`)
                   button.btn.btn--small.btn--outline(type='submit' data-tooltip='Deny this request') ✕ Deny
 
-    h2.section-heading Team Members
+    .section-heading-row
+      h2.section-heading Team Members
+      label.form-checkbox
+        input#showInactive(type='checkbox')
+        |  Show deactivated
     table.admin-table
       thead
         tr
@@ -50,7 +54,7 @@ block content
           th Actions
       tbody
         each user in users
-          tr(class=user.is_active ? '' : 'admin-table__inactive')
+          tr(class=user.is_active ? '' : 'admin-table__inactive' data-active=user.is_active ? 'true' : 'false')
             td.admin-table__truncate(data-tooltip=user.display_name)= user.display_name
             td.admin-table__truncate(data-tooltip=user.email)= user.email
             td.admin-table__roles
@@ -85,3 +89,15 @@ block content
               else
                 form(method='POST' action=`/admin/users/${user.id}/activate`)
                   button.btn.btn--small.btn--outline(type='submit' data-tooltip='Reactivate account') ✓
+
+  script.
+    (function() {
+      var toggle = document.getElementById('showInactive');
+      if (!toggle) return;
+      var rows = document.querySelectorAll('tr[data-active="false"]');
+      // Hide inactive by default
+      rows.forEach(function(r) { r.style.display = 'none'; });
+      toggle.addEventListener('change', function() {
+        rows.forEach(function(r) { r.style.display = toggle.checked ? '' : 'none'; });
+      });
+    })();
