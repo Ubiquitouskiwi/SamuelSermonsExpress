@@ -23,7 +23,7 @@ block content
         each sermon in sermons
           tr
             td= sermon.id
-            td.admin-table__truncate(title=sermon.title)= sermon.title
+            td.admin-table__truncate(data-tooltip=sermon.title)= sermon.title
             td
               span.badge= sermon.sermon_type
             td= sermon.collection

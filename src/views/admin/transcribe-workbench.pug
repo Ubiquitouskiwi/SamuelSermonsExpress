@@ -7,7 +7,7 @@ block content
         a.back-link(href='/admin/transcribe') &larr; Back to Queue
         h1.workbench__title= sermon.title
       .workbench__toolbar-right
-        button#ocrToggle.btn.btn--small.btn--outline(type='button' title='OCR Assist — read text from the scanned document') OCR Assist
+        button#ocrToggle.btn.btn--small.btn--outline(type='button' data-tooltip='OCR Assist — read text from the scanned document') OCR Assist
         label.workbench__status-label(for='statusSelect') Status:
         select#statusSelect.filter-bar__select(aria-label='Transcription status')
           option(value='not_started' selected=(sermon.transcription_status === 'not_started')) Not Started
@@ -43,7 +43,7 @@ block content
           option(value='3') High (3x) — modern laptop/desktop
           option(value='4') Ultra (4x) — powerful machine only
         span#ocrStatus.ocr-toolbar__status Ready
-        button#ocrRemove.btn.btn--small.btn--outline(type='button' title='Remove cached OCR data from your browser') Remove OCR Data
+        button#ocrRemove.btn.btn--small.btn--outline(type='button' data-tooltip='Remove cached OCR data from your browser') Remove OCR Data
 
     //- Quality change warning modal
     #ocrQualityModal.ocr-modal(hidden)

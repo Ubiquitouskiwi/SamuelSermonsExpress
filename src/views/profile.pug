@@ -43,11 +43,11 @@ block content
             each a in avatars
               if a.available
                 - var optClass = a.tier === 'admin' ? 'avatar-option--admin' : a.tier === 'legendary' ? 'avatar-option--legendary' : a.tier === 'creator' ? 'avatar-option--creator' : a.tier === 'role' ? 'avatar-option--role-' + a.role : a.tier === 'unlock' ? 'avatar-option--unlock' : ''
-                label.avatar-option(title=a.label class=optClass)
+                label.avatar-option(data-tooltip=a.label class=optClass)
                   input(type='radio' name='avatar' value=a.key checked=(profileUser.avatar === a.key))
                   span.avatar-option__emoji= a.emoji
               else
-                .avatar-option.avatar-option--locked(title=a.unlockHint || 'Locked')
+                .avatar-option.avatar-option--locked(data-tooltip=a.unlockHint || 'Locked')
                   span.avatar-option__emoji= a.emoji
                   span.avatar-option__lock 🔒
         .form-group
@@ -61,7 +61,7 @@ block content
       form(method='POST' action='/profile/featured')
         .featured-selector
           each a in allEarned
-            label.featured-selector__item(title=a.label)
+            label.featured-selector__item(data-tooltip=a.label)
               - var isChecked = featured && featured.some(f => f.key === a.key)
               input(type='checkbox' name='featured' value=a.key checked=isChecked)
               span.featured-selector__emoji= a.icon

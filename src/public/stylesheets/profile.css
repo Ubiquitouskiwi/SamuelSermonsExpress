@@ -773,16 +773,16 @@
 
 /* --- Role-exclusive avatar styling in selector --- */
 .avatar-option--role-developer {
-  border-color: #0891b2;
-  background: linear-gradient(135deg, rgba(8, 145, 178, 0.05), rgba(8, 145, 178, 0.12));
+  border-color: #3d5a6e;
+  background: linear-gradient(135deg, rgba(61, 90, 110, 0.05), rgba(61, 90, 110, 0.12));
 }
 
 .avatar-option--role-transcriber {
-  border-color: #059669;
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.12));
+  border-color: #1a4a6e;
+  background: linear-gradient(135deg, rgba(26, 74, 110, 0.05), rgba(26, 74, 110, 0.12));
 }
 
 .avatar-option--role-uploader {
-  border-color: #7c3aed;
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(124, 58, 237, 0.12));
+  border-color: #c48f00;
+  background: linear-gradient(135deg, rgba(196, 143, 0, 0.05), rgba(196, 143, 0, 0.12));
 }
