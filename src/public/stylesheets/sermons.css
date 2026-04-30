@@ -349,6 +349,31 @@
   height: 80vh;
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--color-border);
+  /* Fix Safari mobile PDF scrolling */
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+}
+
+/* iOS Safari needs a scrollable wrapper for iframes */
+.sermon-detail__viewer {
+  min-height: 70vh;
+  position: relative;
+}
+
+.sermon-detail__iframe-wrap {
+  width: 100%;
+  height: 80vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.sermon-detail__iframe-wrap iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 200vh;
+  border: none;
 }
 
 /* Metadata list in sidebar */

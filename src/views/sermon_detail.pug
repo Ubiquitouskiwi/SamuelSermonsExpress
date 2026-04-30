@@ -31,7 +31,8 @@ block content
     section.sermon-detail__viewer(aria-label='Sermon document viewer')
       h2.sr-only Sermon Document
       a(href=sermon.imageLink target='_blank' rel='noopener noreferrer') Open PDF in new tab
-      iframe(src=sermon.imageLink title=`PDF viewer for ${sermon.title}` loading='lazy')
+      .sermon-detail__iframe-wrap
+        iframe(src=sermon.imageLink title=`PDF viewer for ${sermon.title}` loading='lazy')
 
       //- Transcription text (if available) — selectable for highlights
       if sermon.transcriptionText
