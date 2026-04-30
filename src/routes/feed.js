@@ -16,14 +16,36 @@ router.get('/rss', async (req, res) => {
     );
 
     var siteUrl = process.env.SITE_URL || 'https://www.samuelsermons.com';
+
+    // Add birthday announcement on May 6th
+    var now = new Date();
+    if (now.getMonth() === 4 && now.getDate() === 6) {
+      var age = now.getFullYear() - 1940;
+      var birthdayItem = {
+        id: 'birthday-' + now.getFullYear(),
+        event_type: 'birthday',
+        title: 'Happy Birthday, Rev. Samuel Starling',
+        description: 'Today marks what would have been Rev. Samuel Starling\'s ' + age + 'th birthday. Visit the site to leave a message in his memory.',
+        created_at: now,
+        sermon_id: null,
+      };
+      result.rows.unshift(birthdayItem);
+    }
+
     var items = result.rows.map(function (e) {
       var link = e.sermon_id ? siteUrl + '/sermons/details?id=' + e.sermon_id : siteUrl;
-      var friendlyTitle = e.event_type === 'sermon_added'
-        ? 'Newly Uploaded: ' + (e.sermon_title || 'New Sermon')
-        : 'Newly Transcribed: ' + (e.sermon_title || 'Sermon');
-      var desc = e.event_type === 'sermon_added'
-        ? 'A new sermon has been added to the collection.'
-        : 'A sermon transcription has been completed and is now available.';
+      var friendlyTitle, desc;
+      if (e.event_type === 'birthday') {
+        friendlyTitle = e.title;
+        desc = e.description;
+        link = siteUrl;
+      } else if (e.event_type === 'sermon_added') {
+        friendlyTitle = 'Newly Uploaded: ' + (e.sermon_title || 'New Sermon');
+        desc = 'A new sermon has been added to the collection.';
+      } else {
+        friendlyTitle = 'Newly Transcribed: ' + (e.sermon_title || 'Sermon');
+        desc = 'A sermon transcription has been completed and is now available.';
+      }
       return '    <item>\n' +
         '      <title>' + escXml(friendlyTitle) + '</title>\n' +
         '      <link>' + escXml(link) + '</link>\n' +
