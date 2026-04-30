@@ -6,6 +6,7 @@ block content
     if currentUser
       p.page-header__desc Welcome back, #{currentUser.display_name}.
 
+  //- Stats overview
   section.section
     .admin-stats
       .admin-stat
@@ -18,16 +19,40 @@ block content
         span.admin-stat__number= stats.users
         span.admin-stat__label Team Members
 
-  section.section
-    h2.section-heading Quick Links
-    .admin-links
-      a.btn.btn--primary(href='/admin/sermons') Manage Sermons
-      a.btn.btn--accent(href='/admin/transcribe') Transcription Workbench
-      a.btn.btn--outline(href='/admin/reviews') Review Queue
-      a.btn.btn--outline(href='/admin/leaderboard') Leaderboard
-      a.btn.btn--outline(href='/admin/sermons/add') Upload Sermon
-      if currentUser && currentUser.roles && currentUser.roles.includes('admin')
-        a.btn.btn--outline(href='/admin/users') Manage Users
-        a.btn.btn--outline(href='/admin/activity') Activity Log
-        a.btn.btn--outline(href='/auth/register') Create Account
-      a.btn.btn--outline(href='/auth/change-password') Change My Password
+  //- Structured sections
+  .dashboard-grid
+    //- Transcription work (transcriber + admin)
+    if currentUser && currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('transcriber'))
+      .dashboard-card
+        h3.dashboard-card__title Transcription
+        p.dashboard-card__desc Pick up a sermon to transcribe or review someone else's work.
+        .dashboard-card__actions
+          a.btn.btn--accent(href='/admin/transcribe') Transcribe
+          a.btn.btn--outline(href='/admin/reviews') Review Queue
+
+    //- Sermon management (uploader + admin)
+    if currentUser && currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('uploader'))
+      .dashboard-card
+        h3.dashboard-card__title Sermons
+        p.dashboard-card__desc Upload new scans, manage metadata, and move sermons through the pipeline.
+        .dashboard-card__actions
+          a.btn.btn--primary(href='/admin/sermons') Manage
+          a.btn.btn--outline(href='/admin/sermons/add') Upload New
+
+    //- Community (everyone)
+    .dashboard-card
+      h3.dashboard-card__title Community
+      p.dashboard-card__desc See how the team is doing and check your own progress.
+      .dashboard-card__actions
+        a.btn.btn--outline(href='/admin/leaderboard') Leaderboard
+        a.btn.btn--outline(href='/profile') My Profile
+
+    //- Admin tools (admin only)
+    if currentUser && currentUser.roles && currentUser.roles.includes('admin')
+      .dashboard-card.dashboard-card--admin
+        h3.dashboard-card__title Administration
+        p.dashboard-card__desc Manage users, view activity, and create new accounts.
+        .dashboard-card__actions
+          a.btn.btn--outline(href='/admin/users') Users
+          a.btn.btn--outline(href='/admin/activity') Activity Log
+          a.btn.btn--outline(href='/auth/register') Create Account
