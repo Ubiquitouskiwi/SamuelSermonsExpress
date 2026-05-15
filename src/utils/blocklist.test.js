@@ -52,31 +52,37 @@ describe('findMatchingBlock', () => {
   });
 
   test('matches a literal email entry exactly', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 7, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 7, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
+        ],
+      }) // SELECT
+      .mockResolvedValueOnce({}); // UPDATE hit counter
     const id = await findMatchingBlock({ name: 'whoever', email: 'spammer@example.com' });
     expect(id).toBe(7);
   });
 
   test('literal email match is case-insensitive', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 7, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 7, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: '', email: 'SPAMMER@Example.COM' });
     expect(id).toBe(7);
   });
 
   test('literal email match tolerates surrounding whitespace on candidate and pattern', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 7, block_type: 'email', pattern: '  spammer@example.com  ', is_regex: false },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 7, block_type: 'email', pattern: '  spammer@example.com  ', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: '', email: '  spammer@example.com\t' });
     expect(id).toBe(7);
   });
@@ -92,11 +98,13 @@ describe('findMatchingBlock', () => {
   });
 
   test('matches a literal name entry case-insensitively', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 12, block_type: 'name', pattern: 'Bad Actor', is_regex: false },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 12, block_type: 'name', pattern: 'Bad Actor', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: 'bad actor', email: 'foo@bar.com' });
     expect(id).toBe(12);
   });
@@ -130,25 +138,38 @@ describe('findMatchingBlock', () => {
     });
     // ".*" should NOT match "anything"; it should only match the literal string ".*".
     expect(await findMatchingBlock({ name: 'anything', email: '' })).toBeNull();
+    // Hit counter update on the second (matching) call.
+    pool.query.mockResolvedValue({});
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 9, block_type: 'name', pattern: '.*', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({});
     expect(await findMatchingBlock({ name: '.*', email: '' })).toBe(9);
   });
 
   test('matches a regex email entry', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 5, block_type: 'email', pattern: '^.*@spam\\.tld$', is_regex: true },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 5, block_type: 'email', pattern: '^.*@spam\\.tld$', is_regex: true },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: '', email: 'anything@spam.tld' });
     expect(id).toBe(5);
   });
 
   test('regex match is case-insensitive (default i flag)', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 5, block_type: 'email', pattern: '^.*@spam\\.tld$', is_regex: true },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 5, block_type: 'email', pattern: '^.*@spam\\.tld$', is_regex: true },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: '', email: 'ANYTHING@SPAM.TLD' });
     expect(id).toBe(5);
   });
@@ -164,12 +185,14 @@ describe('findMatchingBlock', () => {
   });
 
   test('regex compile failure logs entry id and continues to next entry', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 1, block_type: 'email', pattern: '[unterminated', is_regex: true },
-        { id: 2, block_type: 'email', pattern: 'good@example.com', is_regex: false },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 1, block_type: 'email', pattern: '[unterminated', is_regex: true },
+          { id: 2, block_type: 'email', pattern: 'good@example.com', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: '', email: 'good@example.com' });
     expect(id).toBe(2);
     expect(console.error).toHaveBeenCalledWith(
@@ -190,12 +213,14 @@ describe('findMatchingBlock', () => {
   });
 
   test('returns first matching entry id and stops iterating', async () => {
-    pool.query.mockResolvedValue({
-      rows: [
-        { id: 1, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
-        { id: 2, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
-      ],
-    });
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 1, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
+          { id: 2, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({});
     const id = await findMatchingBlock({ name: '', email: 'spammer@example.com' });
     expect(id).toBe(1);
   });
@@ -221,6 +246,66 @@ describe('findMatchingBlock', () => {
     pool.query.mockRejectedValue(new Error('connection refused'));
     await expect(findMatchingBlock({ name: 'a', email: 'b@c.com' })).rejects.toThrow(
       'connection refused'
+    );
+  });
+
+  test('on a match, increments hit_count and stamps last_hit_at via UPDATE', async () => {
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 7, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
+        ],
+      })
+      .mockResolvedValueOnce({}); // UPDATE result
+
+    const id = await findMatchingBlock({ name: '', email: 'spammer@example.com' });
+    expect(id).toBe(7);
+    expect(pool.query).toHaveBeenCalledTimes(2);
+    expect(pool.query.mock.calls[1][0]).toMatch(
+      /UPDATE request_blocklist SET hit_count = hit_count \+ 1, last_hit_at = NOW\(\) WHERE id = \$1/
+    );
+    expect(pool.query.mock.calls[1][1]).toEqual([7]);
+  });
+
+  test('UPDATE for the hit counter also runs for regex matches', async () => {
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 5, block_type: 'email', pattern: '^foo@bar$', is_regex: true },
+        ],
+      })
+      .mockResolvedValueOnce({});
+    const id = await findMatchingBlock({ name: '', email: 'foo@bar' });
+    expect(id).toBe(5);
+    expect(pool.query.mock.calls[1][0]).toMatch(/UPDATE request_blocklist/);
+    expect(pool.query.mock.calls[1][1]).toEqual([5]);
+  });
+
+  test('does NOT issue an UPDATE when no entry matches', async () => {
+    pool.query.mockResolvedValueOnce({
+      rows: [
+        { id: 1, block_type: 'email', pattern: 'a@b.com', is_regex: false },
+      ],
+    });
+    const id = await findMatchingBlock({ name: '', email: 'unrelated@x.com' });
+    expect(id).toBeNull();
+    expect(pool.query).toHaveBeenCalledTimes(1);
+  });
+
+  test('a hit counter UPDATE failure is logged and swallowed (still returns the matched id)', async () => {
+    pool.query
+      .mockResolvedValueOnce({
+        rows: [
+          { id: 7, block_type: 'email', pattern: 'spammer@example.com', is_regex: false },
+        ],
+      })
+      .mockRejectedValueOnce(new Error('counter down'));
+
+    const id = await findMatchingBlock({ name: '', email: 'spammer@example.com' });
+    // Match still wins even if the counter update fails.
+    expect(id).toBe(7);
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringMatching(/^Blocklist hit counter update failed for entry 7: /)
     );
   });
 });

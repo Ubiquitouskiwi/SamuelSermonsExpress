@@ -44,17 +44,38 @@ async function findMatchingBlock(req) {
         continue;
       }
       if (regex.test(trimmedCandidate)) {
+        await recordHit(entry.id);
         return entry.id;
       }
     } else {
       const trimmedPattern = String(entry.pattern).trim().toLowerCase();
       if (trimmedPattern === trimmedCandidate.toLowerCase()) {
+        await recordHit(entry.id);
         return entry.id;
       }
     }
   }
 
   return null;
+}
+
+/**
+ * Increment the hit counter and stamp last_hit_at on a blocklist entry.
+ * Failures are logged and swallowed so a counter-update outage cannot
+ * flip a blocked submission into the accepted path.
+ *
+ * @param {number} id
+ * @returns {Promise<void>}
+ */
+async function recordHit(id) {
+  try {
+    await pool.query(
+      'UPDATE request_blocklist SET hit_count = hit_count + 1, last_hit_at = NOW() WHERE id = $1',
+      [id]
+    );
+  } catch (err) {
+    console.error('Blocklist hit counter update failed for entry ' + id + ': ' + err.message);
+  }
 }
 
 /**

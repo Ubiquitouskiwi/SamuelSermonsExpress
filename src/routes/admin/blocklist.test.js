@@ -66,6 +66,9 @@ describe('GET /admin/blocklist', () => {
     expect(res.body.locals.flash).toBeNull();
     expect(pool.query.mock.calls[0][0]).toMatch(/ORDER BY b\.created_at DESC/);
     expect(pool.query.mock.calls[0][0]).toMatch(/LEFT JOIN users u ON b\.created_by = u\.id/);
+    // hit_count and last_hit_at must be selected so the view can render them.
+    expect(pool.query.mock.calls[0][0]).toMatch(/b\.hit_count/);
+    expect(pool.query.mock.calls[0][0]).toMatch(/b\.last_hit_at/);
   });
 
   test('reads optional pre-fill query parameters', async () => {

@@ -41,6 +41,8 @@ describe('admin/blocklist.pug', () => {
           pattern: 'spammer@example.com',
           is_regex: false,
           reason: 'Repeat offender',
+          hit_count: 3,
+          last_hit_at: new Date('2024-09-01T12:30:00Z'),
           created_at: new Date('2024-06-15T00:00:00Z'),
           created_by_name: 'Admin User',
         },
@@ -53,7 +55,26 @@ describe('admin/blocklist.pug', () => {
     expect(html).toContain('Admin User');
     expect(html).toContain('action="/admin/blocklist/1/remove"');
     expect(html).toContain('✕ Remove');
+    // Hit counter and last-hit columns.
+    expect(html).toMatch(/<td>3<\/td>/);
+    expect(html).toContain(new Date('2024-09-01T12:30:00Z').toLocaleString());
     expect(html).not.toContain('No entries yet.');
+  });
+
+  test('renders 0 hits and a muted dash for last_hit_at when never hit', () => {
+    const html = render({
+      entries: [
+        {
+          id: 1, block_type: 'email', pattern: 'x@y.z', is_regex: false,
+          reason: null, hit_count: 0, last_hit_at: null,
+          created_at: new Date(), created_by_name: 'A',
+        },
+      ],
+    });
+    expect(html).toMatch(/<td>0<\/td>/);
+    // last_hit_at column should fall back to a muted dash.
+    const muted = html.match(/<span class="text-muted">—<\/span>/g) || [];
+    expect(muted.length).toBeGreaterThanOrEqual(1);
   });
 
   test('renders ✓ for regex entries and — for non-regex entries', () => {
@@ -61,11 +82,13 @@ describe('admin/blocklist.pug', () => {
       entries: [
         {
           id: 1, block_type: 'email', pattern: '^.*$', is_regex: true,
-          reason: null, created_at: new Date(), created_by_name: 'A',
+          reason: null, hit_count: 0, last_hit_at: null,
+          created_at: new Date(), created_by_name: 'A',
         },
         {
           id: 2, block_type: 'name', pattern: 'lit', is_regex: false,
-          reason: null, created_at: new Date(), created_by_name: 'A',
+          reason: null, hit_count: 0, last_hit_at: null,
+          created_at: new Date(), created_by_name: 'A',
         },
       ],
     });
@@ -78,13 +101,14 @@ describe('admin/blocklist.pug', () => {
       entries: [
         {
           id: 1, block_type: 'email', pattern: 'x@y.z', is_regex: false,
-          reason: null, created_at: new Date(), created_by_name: null,
+          reason: null, hit_count: 0, last_hit_at: null,
+          created_at: new Date(), created_by_name: null,
         },
       ],
     });
-    // Two muted dashes: one for reason, one for created_by_name.
+    // Three muted dashes: reason, last_hit_at, created_by_name.
     const matches = html.match(/<span class="text-muted">—<\/span>/g) || [];
-    expect(matches.length).toBe(2);
+    expect(matches.length).toBe(3);
   });
 
   test('flash success banner uses the success role and message', () => {

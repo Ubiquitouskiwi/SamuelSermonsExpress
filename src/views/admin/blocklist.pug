@@ -47,13 +47,15 @@ block content
           th Type
           th Regex
           th Reason
+          th Hits
+          th Last Hit
           th Added By
           th Added On
           th Actions
       tbody
         if entries.length === 0
           tr
-            td(colspan='7') No entries yet.
+            td(colspan='9') No entries yet.
         else
           each entry in entries
             tr
@@ -68,6 +70,12 @@ block content
               td
                 if entry.reason
                   = entry.reason
+                else
+                  span.text-muted —
+              td= entry.hit_count || 0
+              td
+                if entry.last_hit_at
+                  = new Date(entry.last_hit_at).toLocaleString()
                 else
                   span.text-muted —
               td

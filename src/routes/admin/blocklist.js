@@ -21,6 +21,7 @@ router.use(requireRole('admin'));
 async function loadEntries() {
   const result = await pool.query(
     `SELECT b.id, b.block_type, b.pattern, b.is_regex, b.reason, b.created_at,
+            b.hit_count, b.last_hit_at,
             u.display_name AS created_by_name
      FROM request_blocklist b
      LEFT JOIN users u ON b.created_by = u.id
