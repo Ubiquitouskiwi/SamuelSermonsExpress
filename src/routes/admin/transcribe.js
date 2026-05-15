@@ -34,7 +34,7 @@ router.get('/', requireRole('admin', 'transcriber'), async (req, res) => {
 });
 
 // Transcription workbench for a specific sermon
-router.get('//:id', requireRole('admin', 'transcriber'), async (req, res) => {
+router.get('/:id', requireRole('admin', 'transcriber'), async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, title, sermon_type, pdf_path, transcription_text, transcription_status, transcription_notes
@@ -50,7 +50,7 @@ router.get('//:id', requireRole('admin', 'transcriber'), async (req, res) => {
 });
 
 // Auto-save transcription (AJAX endpoint)
-router.post('//:id/save', requireRole('admin', 'transcriber'), express.json(), async (req, res) => {
+router.post('/:id/save', requireRole('admin', 'transcriber'), express.json(), async (req, res) => {
   const { text, notes, status } = req.body;
   try {
     const updates = [];

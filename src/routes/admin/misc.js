@@ -18,7 +18,7 @@ router.get('/leaderboard', async (req, res) => {
        WHERE u.is_active = true AND u.total_points > 0
        ORDER BY u.total_points DESC`
     );
-    const { getAvatar } = require('../utils/avatars');
+    const { getAvatar } = require('../../utils/avatars');
     result.rows.forEach(function(u) { u.avatarEmoji = getAvatar(u.avatar).emoji; });
     res.render('admin/leaderboard', { users: result.rows, pageTitle: 'Leaderboard' });
   } catch (err) {

@@ -44,13 +44,13 @@ router.get('/', requireRole('admin', 'uploader'), async (req, res) => {
 });
 
 // Add sermon form
-router.get('//add', requireRole('admin', 'uploader'), async (req, res) => {
+router.get('/add', requireRole('admin', 'uploader'), async (req, res) => {
   const sermonTypes = await getSermonTypes();
   res.render('admin/sermon-add', { error: null, success: null, sermonTypes });
 });
 
 // Add sermon POST
-router.post('//add', requireRole('admin', 'uploader'), upload.single('pdf'), async (req, res) => {
+router.post('/add', requireRole('admin', 'uploader'), upload.single('pdf'), async (req, res) => {
   const sermonTypes = await getSermonTypes();
   if (!req.file) {
     return res.render('admin/sermon-add', { error: 'Please select a PDF file.', success: null, sermonTypes });
@@ -80,7 +80,7 @@ router.post('//add', requireRole('admin', 'uploader'), upload.single('pdf'), asy
 });
 
 // Edit sermon form
-router.get('//:id/edit', requireRole('admin', 'uploader'), async (req, res) => {
+router.get('/:id/edit', requireRole('admin', 'uploader'), async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM sermons WHERE id = $1', [req.params.id]);
     if (result.rows.length === 0) return res.redirect('/admin/sermons');
@@ -93,7 +93,7 @@ router.get('//:id/edit', requireRole('admin', 'uploader'), async (req, res) => {
 });
 
 // Edit sermon POST
-router.post('//:id/edit', requireRole('admin', 'uploader'), upload.single('pdf'), async (req, res) => {
+router.post('/:id/edit', requireRole('admin', 'uploader'), upload.single('pdf'), async (req, res) => {
   const sermonId = parseInt(req.params.id, 10);
   const { title, sermon_type, collection, stage } = req.body;
   try {
@@ -129,7 +129,7 @@ router.post('//:id/edit', requireRole('admin', 'uploader'), upload.single('pdf')
 });
 
 // Delete sermon
-router.post('//:id/delete', requireRole('admin'), async (req, res) => {
+router.post('/:id/delete', requireRole('admin'), async (req, res) => {
   try {
     const pre = await pool.query('SELECT title FROM sermons WHERE id = $1', [req.params.id]);
     await pool.query('DELETE FROM sermons WHERE id = $1', [req.params.id]);
@@ -143,7 +143,7 @@ router.post('//:id/delete', requireRole('admin'), async (req, res) => {
 });
 
 // Move sermon to a different pipeline stage
-router.post('//:id/move', requireRole('admin', 'uploader'), async (req, res) => {
+router.post('/:id/move', requireRole('admin', 'uploader'), async (req, res) => {
   const { new_stage } = req.body;
   try {
     const result = await pool.query('SELECT pdf_path FROM sermons WHERE id = $1', [req.params.id]);

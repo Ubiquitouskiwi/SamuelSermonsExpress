@@ -27,9 +27,11 @@ router.get('/', async (req, res) => {
 
 // Mount sub-routers
 router.use('/users', require('./admin/users'));
+router.use('/requests', require('./admin/requests'));
 router.use('/sermons', require('./admin/sermons'));
 router.use('/transcribe', require('./admin/transcribe'));
 router.use('/reviews', require('./admin/reviews'));
+router.use('/blocklist', require('./admin/blocklist'));
 router.use('/', require('./admin/misc'));
 
 module.exports = router;

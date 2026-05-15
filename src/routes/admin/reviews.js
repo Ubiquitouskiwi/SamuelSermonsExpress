@@ -31,7 +31,7 @@ router.get('/', requireRole('admin', 'transcriber'), async (req, res) => {
 });
 
 // Claim a review
-router.post('//:sermonId/claim', requireRole('admin', 'transcriber'), async (req, res) => {
+router.post('/:sermonId/claim', requireRole('admin', 'transcriber'), async (req, res) => {
   const sermonId = parseInt(req.params.sermonId, 10);
   try {
     // Check they didn't transcribe it
@@ -58,7 +58,7 @@ router.post('//:sermonId/claim', requireRole('admin', 'transcriber'), async (req
 });
 
 // Review workbench
-router.get('//:sermonId', requireRole('admin', 'transcriber'), async (req, res) => {
+router.get('/:sermonId', requireRole('admin', 'transcriber'), async (req, res) => {
   const sermonId = parseInt(req.params.sermonId, 10);
   try {
     const sermonResult = await pool.query(
@@ -106,7 +106,7 @@ router.get('//:sermonId', requireRole('admin', 'transcriber'), async (req, res) 
 });
 
 // Add a comment
-router.post('//:reviewId/comment', requireRole('admin', 'transcriber'), async (req, res) => {
+router.post('/:reviewId/comment', requireRole('admin', 'transcriber'), async (req, res) => {
   const { comment_text, passage_ref, sermon_id } = req.body;
   try {
     await pool.query(
@@ -122,7 +122,7 @@ router.post('//:reviewId/comment', requireRole('admin', 'transcriber'), async (r
 });
 
 // Resolve a comment
-router.post('//comment/:commentId/resolve', requireRole('admin', 'transcriber'), async (req, res) => {
+router.post('/comment/:commentId/resolve', requireRole('admin', 'transcriber'), async (req, res) => {
   const { sermon_id } = req.body;
   try {
     await pool.query('UPDATE review_comments SET is_resolved = true WHERE id = $1', [req.params.commentId]);
@@ -134,7 +134,7 @@ router.post('//comment/:commentId/resolve', requireRole('admin', 'transcriber'),
 });
 
 // Approve transcription
-router.post('//:reviewId/approve', requireRole('admin', 'transcriber'), async (req, res) => {
+router.post('/:reviewId/approve', requireRole('admin', 'transcriber'), async (req, res) => {
   const { sermon_id } = req.body;
   const sid = parseInt(sermon_id, 10);
   try {
@@ -165,7 +165,7 @@ router.post('//:reviewId/approve', requireRole('admin', 'transcriber'), async (r
 });
 
 // Request changes
-router.post('//:reviewId/request-changes', requireRole('admin', 'transcriber'), async (req, res) => {
+router.post('/:reviewId/request-changes', requireRole('admin', 'transcriber'), async (req, res) => {
   const { sermon_id } = req.body;
   try {
     await pool.query(

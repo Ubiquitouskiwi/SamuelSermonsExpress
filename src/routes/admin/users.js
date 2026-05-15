@@ -5,7 +5,7 @@ const { requireRole } = require('../../middleware/auth');
 const { awardPoints } = require('../../utils/points');
 
 // --- User Management (admin only) ---
-router.get('/users', requireRole('admin'), async (req, res) => {
+router.get('/', requireRole('admin'), async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, email, display_name, role, is_active, must_change_password, last_login_at, created_at FROM users ORDER BY created_at DESC'
@@ -21,7 +21,7 @@ router.get('/users', requireRole('admin'), async (req, res) => {
 });
 
 // Edit user
-router.get('/users/:id/edit', requireRole('admin'), async (req, res) => {
+router.get('/:id/edit', requireRole('admin'), async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, email, display_name, role, is_active, must_change_password FROM users WHERE id = $1',
@@ -35,7 +35,7 @@ router.get('/users/:id/edit', requireRole('admin'), async (req, res) => {
   }
 });
 
-router.post('/users/:id/edit', requireRole('admin'), async (req, res) => {
+router.post('/:id/edit', requireRole('admin'), async (req, res) => {
   const userId = parseInt(req.params.id, 10);
   const { display_name, is_active, must_change_password } = req.body;
   // Collect roles from checkboxes
@@ -66,7 +66,7 @@ router.post('/users/:id/edit', requireRole('admin'), async (req, res) => {
 });
 
 // Toggle require password change (quick action from user list)
-router.post('/users/:id/require-password-change', requireRole('admin'), async (req, res) => {
+router.post('/:id/require-password-change', requireRole('admin'), async (req, res) => {
   try {
     await pool.query('UPDATE users SET must_change_password = true, updated_at = NOW() WHERE id = $1', [req.params.id]);
   } catch (err) {
@@ -76,7 +76,7 @@ router.post('/users/:id/require-password-change', requireRole('admin'), async (r
 });
 
 // Deactivate user (quick action)
-router.post('/users/:id/deactivate', requireRole('admin'), async (req, res) => {
+router.post('/:id/deactivate', requireRole('admin'), async (req, res) => {
   try {
     await pool.query('UPDATE users SET is_active = false, updated_at = NOW() WHERE id = $1', [req.params.id]);
   } catch (err) {
@@ -86,7 +86,7 @@ router.post('/users/:id/deactivate', requireRole('admin'), async (req, res) => {
 });
 
 // Reactivate user (quick action)
-router.post('/users/:id/activate', requireRole('admin'), async (req, res) => {
+router.post('/:id/activate', requireRole('admin'), async (req, res) => {
   try {
     await pool.query('UPDATE users SET is_active = true, updated_at = NOW() WHERE id = $1', [req.params.id]);
   } catch (err) {
@@ -95,42 +95,8 @@ router.post('/users/:id/activate', requireRole('admin'), async (req, res) => {
   res.redirect('/admin/users');
 });
 
-// Approve access request
-router.post('/requests/:id/approve', requireRole('admin'), async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM access_requests WHERE id = $1', [req.params.id]);
-    if (result.rows.length > 0) {
-      const request = result.rows[0];
-      await pool.query(
-        "UPDATE access_requests SET status = 'approved', reviewed_by = $1, reviewed_at = NOW() WHERE id = $2",
-        [req.session.userId, req.params.id]
-      );
-      // Redirect to register page pre-filled (via query params)
-      const role = request.role === 'both' ? 'transcriber,uploader' : request.role === 'other' ? 'user' : request.role;
-      res.redirect(`/auth/register?name=${encodeURIComponent(request.name)}&email=${encodeURIComponent(request.email)}&role=${encodeURIComponent(role)}`);
-      return;
-    }
-  } catch (err) {
-    console.error('Approve request error:', err);
-  }
-  res.redirect('/admin/users');
-});
-
-// Deny access request
-router.post('/requests/:id/deny', requireRole('admin'), async (req, res) => {
-  try {
-    await pool.query(
-      "UPDATE access_requests SET status = 'denied', reviewed_by = $1, reviewed_at = NOW() WHERE id = $2",
-      [req.session.userId, req.params.id]
-    );
-  } catch (err) {
-    console.error('Deny request error:', err);
-  }
-  res.redirect('/admin/users');
-});
-
 // Reset user password (admin only)
-router.post('/users/:id/reset-password', requireRole('admin'), async (req, res) => {
+router.post('/:id/reset-password', requireRole('admin'), async (req, res) => {
   const userId = parseInt(req.params.id, 10);
   const { new_password } = req.body;
   try {

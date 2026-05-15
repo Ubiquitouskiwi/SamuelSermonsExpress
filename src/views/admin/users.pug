@@ -37,6 +37,7 @@ block content
                   button.btn.btn--small.btn--primary(type='submit' data-tooltip='Approve and create account') ✓ Approve
                 form(method='POST' action=`/admin/requests/${r.id}/deny`)
                   button.btn.btn--small.btn--outline(type='submit' data-tooltip='Deny this request') ✕ Deny
+                a.btn.btn--small.btn--outline(href='/admin/blocklist?prefill_type=email&prefill_email=' + encodeURIComponent(r.email) data-tooltip='Pre-fill the blocklist add form with this email') ⛔ Block
 
     .section-heading-row
       h2.section-heading Team Members

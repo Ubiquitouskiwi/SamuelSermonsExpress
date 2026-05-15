@@ -1,0 +1,81 @@
+extends ../layout
+block content
+  header.page-header
+    h1.page-header__title Request Blocklist
+    hr.divider.divider--center
+    p.page-header__desc Silently drop incoming access requests whose name or email matches a configured pattern.
+
+  if flash
+    if flash.type === 'success'
+      .auth-form__success(role='status')= flash.message
+    else
+      .auth-form__error(role='alert')= flash.message
+  .auth-form
+    if error
+      .alert.alert--error(role='alert')= error
+
+    form(method='POST' action='/admin/blocklist/add')
+      .form-group
+        label(for='block_type') Block Type
+        - var selectedType = (formValues && formValues.block_type) || prefill.type || 'email'
+        select#block_type.form-select(name='block_type' required)
+          option(value='email' selected=(selectedType === 'email')) Email
+          option(value='name' selected=(selectedType === 'name')) Name
+      .form-group
+        label(for='pattern') Pattern
+        - var patternValue = (formValues && formValues.pattern) || prefill.email || prefill.name || ''
+        input#pattern.form-input(type='text' name='pattern' maxlength='500' required value=patternValue)
+        small.form-hint Up to 500 characters. For literal blocks, the comparison is trimmed and case-insensitive.
+      .form-group
+        label.form-checkbox
+          input(type='checkbox' name='is_regex' checked=(formValues && formValues.is_regex))
+          |  Treat pattern as a regular expression
+      .form-group
+        label(for='reason') Reason
+        - var reasonValue = (formValues && formValues.reason) || ''
+        input#reason.form-input(type='text' name='reason' maxlength='500' value=reasonValue)
+        small.form-hint Optional. Free-form note for other admins.
+      .form-group
+        button.btn.btn--primary(type='submit') Add Block
+
+  section.section
+    h2.section-heading Existing Blocks
+    table.admin-table
+      thead
+        tr
+          th Pattern
+          th Type
+          th Regex
+          th Reason
+          th Added By
+          th Added On
+          th Actions
+      tbody
+        if entries.length === 0
+          tr
+            td(colspan='7') No entries yet.
+        else
+          each entry in entries
+            tr
+              td.admin-table__truncate(data-tooltip=entry.pattern)= entry.pattern
+              td
+                span.badge(class='badge--' + entry.block_type)= entry.block_type
+              td
+                if entry.is_regex
+                  | ✓
+                else
+                  | —
+              td
+                if entry.reason
+                  = entry.reason
+                else
+                  span.text-muted —
+              td
+                if entry.created_by_name
+                  = entry.created_by_name
+                else
+                  span.text-muted —
+              td= new Date(entry.created_at).toLocaleDateString()
+              td.admin-table__actions
+                form(method='POST' action='/admin/blocklist/' + entry.id + '/remove')
+                  button.btn.btn--small.btn--outline(type='submit' data-tooltip='Remove this block') ✕ Remove
