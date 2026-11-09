@@ -2,7 +2,7 @@ extends layout
 block content
   header.page-header
     h1.page-header__title Sermons Collection
-    hr.divider.divider--center
+    hr.divider.divider--center(aria-hidden='true')
     p.page-header__desc Browse through the collected teachings of Rev. Samuel Starling, preserved and digitized for future generations.
 
   section.section(aria-labelledby="sermons-heading")
@@ -11,24 +11,25 @@ block content
     .filter-toolbar
       //- Search with suggestions
       .filter-toolbar__search
-        input#sermonSearch.filter-toolbar__input(type='text' placeholder='Search sermons...' autocomplete='off' aria-label='Search sermons')
-        #searchSuggestions.filter-toolbar__suggestions(hidden)
+        label.filter-toolbar__label(for='sermonSearch') Search sermons
+        input#sermonSearch.filter-toolbar__input(type='search' placeholder='Type a title or word' autocomplete='off' aria-controls='searchSuggestions')
+        #searchSuggestions.filter-toolbar__suggestions(hidden aria-label='Matching sermons')
 
       //- Collection toggle
-      .filter-toolbar__group
-        span.filter-toolbar__label Collection
+      .filter-toolbar__group(role='group' aria-labelledby='collectionLabel')
+        span#collectionLabel.filter-toolbar__label Collection
         .filter-toolbar__chips
-          button.filter-chip.filter-chip--active(type='button' data-collection='all') All
-          button.filter-chip(type='button' data-collection='ordered') Ordered
-          button.filter-chip(type='button' data-collection='unordered') Unordered
+          button.filter-chip.filter-chip--active(type='button' data-collection='all' aria-pressed='true') All
+          button.filter-chip(type='button' data-collection='ordered' aria-pressed='false') Ordered
+          button.filter-chip(type='button' data-collection='unordered' aria-pressed='false') Unordered
 
       //- Type multi-select chips (built dynamically from data)
-      .filter-toolbar__group
-        span.filter-toolbar__label Type
+      .filter-toolbar__group(role='group' aria-labelledby='typeLabel')
+        span#typeLabel.filter-toolbar__label Type
         #typeChips.filter-toolbar__chips
 
-      //- Count
-      .filter-toolbar__count
+      //- Count (announced politely when filters change)
+      .filter-toolbar__count(role='status' aria-live='polite')
         span#sermonCount 0
         |  sermons
 
@@ -37,9 +38,9 @@ block content
       h3.recently-viewed__heading Recently Viewed
       .recently-viewed__list
 
-    #sermon-grid.sermon-grid(role='list' aria-label='Sermon cards')
+    #sermon-grid.sermon-grid
       //- Loading skeleton (hidden once JS renders cards)
-      .sermon-grid__skeleton#gridSkeleton
+      .sermon-grid__skeleton#gridSkeleton(aria-hidden='true')
         - for (var i = 0; i < 6; i++)
           .skeleton-card
             .skeleton-card__badge

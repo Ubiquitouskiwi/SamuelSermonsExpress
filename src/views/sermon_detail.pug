@@ -1,9 +1,11 @@
 extends layout
 block content
-  a.back-link(href='/sermons') &larr; Back to Sermons
+  a.back-link(href='/sermons')
+    span(aria-hidden='true') &larr;
+    |  Back to Sermons
 
   h1.page-header__title= sermon.title.includes('.') ? sermon.title.split('. ')[1] : sermon.title
-  hr.divider
+  hr.divider(aria-hidden='true')
 
   .sermon-detail
     aside.sermon-detail__sidebar
@@ -31,8 +33,11 @@ block content
 
     section.sermon-detail__viewer(aria-label='Sermon document viewer')
       h2.sr-only Sermon Document
-      a(href=sermon.imageLink target='_blank' rel='noopener noreferrer') Open PDF in new tab
-      .sermon-detail__iframe-wrap
+      p.sermon-detail__pdf-link
+        a.btn.btn--outline(href=sermon.imageLink target='_blank' rel='noopener noreferrer')
+          | Open the sermon PDF
+          span.sr-only  (opens in a new tab)
+      .sermon-detail__iframe-wrap(tabindex='0' role='region' aria-label=`Scrollable PDF of ${sermon.title}`)
         iframe(src=sermon.imageLink title=`PDF viewer for ${sermon.title}` loading='lazy')
 
       //- Transcription text (if available) — selectable for highlights

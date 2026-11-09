@@ -2,7 +2,7 @@ extends layout
 block content
   header.page-header
     h1.page-header__title Join the Team
-    hr.divider.divider--center
+    hr.divider.divider--center(aria-hidden='true')
     p.page-header__desc Help preserve Rev. Samuel Starling's sermons. Fill out the form below and we'll get you set up with an account.
 
   .auth-form
@@ -14,10 +14,10 @@ block content
     form(method='POST' action='/contact')
       .form-group
         label(for='name') Your Name
-        input#name.form-input(type='text' name='name' required placeholder='First and last name')
+        input#name.form-input(type='text' name='name' required autocomplete='name' placeholder='First and last name')
       .form-group
         label(for='email') Email
-        input#email.form-input(type='email' name='email' required placeholder='you@example.com')
+        input#email.form-input(type='email' name='email' required autocomplete='email' placeholder='you@example.com')
       .form-group
         label(for='role') How would you like to help?
         select#role.form-select(name='role' required)
@@ -33,4 +33,4 @@ block content
 
     p.section-desc(style='margin-top: var(--space-lg); text-align: center;')
       | Already have an account? 
-      a(href='/auth/login') Sign in here
+      a(href='/auth/login') Sign in to your account

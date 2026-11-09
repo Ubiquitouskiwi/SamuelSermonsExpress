@@ -11,9 +11,11 @@
   width: 14rem;
   height: auto;
   border-radius: var(--border-radius-lg);
-  border: 3px solid var(--color-accent);
+  padding: 5px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-accent);
   margin: 0 auto var(--space-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .about-intro__name {
@@ -30,6 +32,12 @@
   max-width: var(--max-width-content);
 }
 
+.about-content p,
+.about-cta p,
+.about-update p {
+  max-width: var(--measure);
+}
+
 .about-content p {
   line-height: var(--leading-relaxed);
   margin-bottom: var(--space-lg);
@@ -44,7 +52,7 @@
   padding: var(--space-xl);
   background-color: var(--color-surface-alt);
   border-radius: var(--border-radius-lg);
-  border-left: 3px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
 }
 
 .about-cta p {
@@ -75,7 +83,7 @@
 }
 
 .about-update p {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--color-text-secondary);
 }

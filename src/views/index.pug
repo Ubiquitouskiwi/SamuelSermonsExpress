@@ -3,7 +3,7 @@ block content
   .home-bg
     section.hero(aria-labelledby="hero-title")
       img.hero__portrait(src='/images/samuel-starling-1.jpg' alt='Portrait of Rev. Samuel Starling')
-      hr.divider.divider--center
+      hr.divider.divider--center(aria-hidden='true')
       h1#hero-title.hero__title Welcome to Samuel&apos;s Sermons
       p.hero__subtitle
         | This site is dedicated to preserving and sharing the powerful and inspiring sermons 
@@ -16,7 +16,7 @@ block content
     //- Sermon of the Day
     if sermonOfDay
       section.section.sermon-of-day
-        hr.divider.divider--center
+        hr.divider.divider--center(aria-hidden='true')
         h2.sermon-of-day__heading Sermon of the Day
         .card
           .sermon-of-day__badge
