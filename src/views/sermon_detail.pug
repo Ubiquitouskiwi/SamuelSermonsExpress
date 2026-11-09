@@ -1,10 +1,12 @@
 extends layout
 block content
+  //- Ordered sermons carry their number as a "12. " prefix; other titles may contain ". " themselves
+  - var titleMatch = /^(\d+)\.\s+(.+)$/.exec(sermon.title || '')
   a.back-link(href='/sermons')
     span(aria-hidden='true') &larr;
     |  Back to Sermons
 
-  h1.page-header__title= sermon.title.includes('.') ? sermon.title.split('. ')[1] : sermon.title
+  h1.page-header__title= titleMatch ? titleMatch[2] : sermon.title
   hr.divider(aria-hidden='true')
 
   .sermon-detail
@@ -12,9 +14,9 @@ block content
       .card
         h2.card__title Sermon Information
         dl.meta-list
-          if sermon.title.includes('.')
+          if titleMatch
             dt Number
-            dd= sermon.title.split('.')[0]
+            dd= titleMatch[1]
           dt Type
           dd= sermon.sermonType.charAt(0).toUpperCase() + sermon.sermonType.slice(1)
 

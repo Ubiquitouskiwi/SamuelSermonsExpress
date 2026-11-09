@@ -231,73 +231,115 @@
   }
 }
 
-/* --- Sermon card grid --- */
+/* --- Sermon cards ---
+   Compact rows: title, then a metadata line and small tags, actions to the side.
+   Two columns on wide screens, one column on phones and at high zoom. */
 .sermon-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
-  gap: var(--space-lg);
-}
-
-@media (max-width: 24rem) {
-  .sermon-grid {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(min(30rem, 100%), 1fr));
+  gap: var(--space-sm) var(--space-lg);
 }
 
 .sermon-card {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-lg);
-  padding: var(--space-lg);
-  transition: border-color var(--transition-fast),
-              box-shadow var(--transition-fast);
+  border-left: 2px solid var(--color-accent);
+  border-radius: var(--border-radius);
+  transition: border-color var(--transition-fast);
 }
 
-.sermon-card:hover {
+.sermon-card:hover,
+.sermon-card:focus-within {
   border-color: var(--color-border-strong);
-  box-shadow: var(--shadow-md);
+  border-left-color: var(--color-accent);
 }
 
-/* Clickable card link wraps badge + title */
-.sermon-card__link {
-  display: flex;
-  flex-direction: column;
-  text-decoration: none;
-  color: inherit;
-  flex: 1;
-}
-
-.sermon-card__link:hover .sermon-card__title,
-.sermon-card__link:focus-visible .sermon-card__title {
-  color: var(--color-primary);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.2em;
-}
-
-.sermon-card__badge {
-  margin-bottom: var(--space-sm);
+.sermon-card__body {
+  flex: 1 1 14rem;
+  min-width: 0;
 }
 
 .sermon-card__title {
   font-family: var(--font-heading);
   font-size: var(--text-lg);
   font-weight: var(--weight-normal);
-  color: var(--color-text);
   line-height: var(--leading-tight);
-  margin-bottom: auto;
-  padding-bottom: var(--space-md);
+  margin: 0;
+}
+
+/* The title link is the main target: at least 44px tall, full title always shown */
+.sermon-card__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.sermon-card__link:hover,
+.sermon-card__link:focus-visible {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+/* Metadata line and tags share one wrapping row */
+.sermon-card__details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+}
+
+.sermon-card__meta {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.sermon-card__sep {
+  margin: 0 0.4em;
+}
+
+.sermon-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+}
+
+.badge--saved {
+  background-color: var(--color-surface);
+  color: var(--color-accent-dark);
+  border-color: var(--color-accent-dark);
 }
 
 .sermon-card__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-border);
-  margin-top: auto;
+  flex: 0 0 auto;
+}
+
+/* Phones: actions sit under the text, separated by a hairline */
+@media (max-width: 30rem) {
+  .sermon-card {
+    padding: var(--space-xs) var(--space-md) var(--space-sm);
+  }
+
+  .sermon-card__actions {
+    flex-basis: 100%;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+  }
 }
 
 /* Loading sentinel for infinite scroll */
@@ -433,35 +475,30 @@
 }
 
 .skeleton-card {
-  padding: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-lg);
+  border-left: 2px solid var(--color-border);
+  border-radius: var(--border-radius);
   background-color: var(--color-surface);
 }
 
 .skeleton-card__badge,
-.skeleton-card__title,
-.skeleton-card__actions {
+.skeleton-card__title {
   /* Still placeholder blocks: no shimmer, nothing moves on its own */
   border-radius: var(--border-radius);
   background: var(--color-surface-alt);
 }
 
 .skeleton-card__badge {
-  width: 4rem;
-  height: 1.2rem;
+  width: 10rem;
+  height: 1rem;
   margin-bottom: var(--space-sm);
 }
 
 .skeleton-card__title {
-  width: 80%;
-  height: 1rem;
-  margin-bottom: var(--space-lg);
-}
-
-.skeleton-card__actions {
-  width: 100%;
-  height: 2rem;
+  width: 70%;
+  height: 1.2rem;
+  margin-bottom: var(--space-sm);
 }
 
 /* --- Recently viewed --- */
