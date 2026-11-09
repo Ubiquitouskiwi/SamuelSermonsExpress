@@ -2,7 +2,7 @@ extends layout
 block content
   header.page-header
     h1.page-header__title Error
-    hr.divider.divider--center
+    hr.divider.divider--center(aria-hidden='true')
 
   .card
     h2= message || 'An error occurred'

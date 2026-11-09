@@ -63,7 +63,7 @@
       '</a>' +
       '<div class="sermon-card__actions">' +
         actionBtn +
-        '<button class="btn btn--small btn--primary share-trigger" type="button" data-share-url="' + detailUrl + '" data-share-title="' + escHtml(s.title) + '">Share</button>' +
+        '<button class="btn btn--small btn--outline share-trigger" type="button" data-share-url="' + detailUrl + '" data-share-title="' + escHtml(s.title) + '">Share</button>' +
       '</div>';
     return card;
   }
@@ -121,6 +121,7 @@
       var btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'filter-chip' + (activeTypes.has(type) ? ' filter-chip--active' : '');
+      btn.setAttribute('aria-pressed', activeTypes.has(type) ? 'true' : 'false');
       var b = badgeMap[type];
       btn.textContent = (b ? b.label : type) + ' (' + types[type] + ')';
       btn.setAttribute('data-type', type);
@@ -128,9 +129,11 @@
         if (activeTypes.has(type)) {
           activeTypes.delete(type);
           btn.classList.remove('filter-chip--active');
+          btn.setAttribute('aria-pressed', 'false');
         } else {
           activeTypes.add(type);
           btn.classList.add('filter-chip--active');
+          btn.setAttribute('aria-pressed', 'true');
         }
         applyFilters();
       });
@@ -148,8 +151,12 @@
   collectionChips.forEach(function (chip) {
     chip.addEventListener('click', function () {
       activeCollection = this.getAttribute('data-collection');
-      collectionChips.forEach(function (c) { c.classList.remove('filter-chip--active'); });
+      collectionChips.forEach(function (c) {
+        c.classList.remove('filter-chip--active');
+        c.setAttribute('aria-pressed', 'false');
+      });
       this.classList.add('filter-chip--active');
+      this.setAttribute('aria-pressed', 'true');
       buildTypeChips();
       applyFilters();
     });

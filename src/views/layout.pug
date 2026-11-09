@@ -2,9 +2,14 @@ doctype html
 html(lang="en" data-theme="auto")
   head
     meta(charset="utf-8")
+    //- Server prefs must come before the script below so it can read them
+    if currentUser && currentUser.preferences
+      script#serverPrefs(type='application/json')= JSON.stringify(currentUser.preferences)
     script.
-      (function(){var t=localStorage.getItem('theme');if(!t){var s=document.getElementById('serverPrefs');if(s)try{var p=JSON.parse(s.textContent);t=p.theme}catch(e){}}document.documentElement.setAttribute('data-theme',t||'auto')})();
-    title #{pageTitle ? pageTitle + ' | ' : ''}Samuel&apos;s Sermons
+      (function(){var d=document.documentElement,p={},s=document.getElementById('serverPrefs');if(s)try{p=JSON.parse(s.textContent)||{}}catch(e){}var t=localStorage.getItem('theme')||p.theme;d.setAttribute('data-theme',t||'auto');var z=localStorage.getItem('text_size')||p.text_size;if(z==='large'||z==='larger')d.setAttribute('data-text-size',z)})();
+    title
+      block title
+        | #{pageTitle ? pageTitle + ' | ' : ''}Samuel&apos;s Sermons
     link(rel='icon' type='image/svg+xml' href='/favicon.svg')
     meta(name='keywords' content='Samuel Starling Sermons Methodist Church Teachings')
     meta(name='description' content="Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church.")
@@ -18,20 +23,20 @@ html(lang="en" data-theme="auto")
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     link(rel='preconnect' href='https://fonts.googleapis.com')
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
-    link(href='https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap' rel='stylesheet')
+    link(href='https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap' rel='stylesheet')
     link(rel='stylesheet' href='/stylesheets/index.css')
     link(rel='alternate' type='application/rss+xml' title='Samuel\'s Sermons Activity Feed' href='/feed/rss')
-    if currentUser && currentUser.preferences
-      script#serverPrefs(type='application/json')= JSON.stringify(currentUser.preferences)
   body
     a.skip-link(href='#main-content') Skip to main content
 
     header.site-header
       .container.site-header__inner
         a.site-header__brand(href='/')
-          span.brand-mark S
+          span.brand-mark(aria-hidden='true') S
           span.brand-text Samuel&apos;s Sermons
-        button.site-header__toggle(type='button' aria-label='Toggle navigation' aria-expanded='false' aria-controls='primary-nav') &#9776;
+        button.site-header__toggle(type='button' aria-expanded='false' aria-controls='primary-nav')
+          span(aria-hidden='true') &#9776;
+          span.site-header__toggle-text Menu
 
         nav#primary-nav.site-header__nav(aria-label='Primary navigation')
           //- Public links
@@ -57,44 +62,58 @@ html(lang="en" data-theme="auto")
 
         //- Settings gear (always visible, opens dropdown)
         .site-header__settings
-          button#settingsToggle.site-header__gear(type='button' aria-label='Settings' aria-expanded='false' aria-controls='settingsPanel') &#9881;
+          button#settingsToggle.site-header__gear(type='button' aria-label='Settings' aria-expanded='false' aria-controls='settingsPanel')
+            span(aria-hidden='true') &#9881;
           .site-header__settings-panel#settingsPanel(hidden)
-            .settings-panel
-              h3.settings-panel__title Settings
+            .settings-panel(role='group' aria-labelledby='settingsTitle')
+              p#settingsTitle.settings-panel__title Settings
+              //- Text size
+              .settings-panel__item
+                span#textSizeLabel.settings-panel__label Text size
+                .settings-panel__options(role='group' aria-labelledby='textSizeLabel')
+                  button.settings-panel__btn#textSizeNormal(type='button' aria-pressed='false' data-text-size='normal')
+                    | A
+                    span.sr-only  standard
+                  button.settings-panel__btn#textSizeLarge(type='button' aria-pressed='false' data-text-size='large' style='font-size: 1.1em')
+                    | A+
+                    span.sr-only  large
+                  button.settings-panel__btn#textSizeLarger(type='button' aria-pressed='false' data-text-size='larger' style='font-size: 1.25em')
+                    | A++
+                    span.sr-only  larger
               //- Theme
               .settings-panel__item
-                label.settings-panel__label Theme
-                .settings-panel__options
-                  button.settings-panel__btn#themeAuto(type='button') Auto
-                  button.settings-panel__btn#themeLight(type='button') Light
-                  button.settings-panel__btn#themeDark(type='button') Dark
+                span#themeLabel.settings-panel__label Theme
+                .settings-panel__options(role='group' aria-labelledby='themeLabel')
+                  button.settings-panel__btn#themeAuto(type='button' aria-pressed='false') Auto
+                  button.settings-panel__btn#themeLight(type='button' aria-pressed='false') Light
+                  button.settings-panel__btn#themeDark(type='button' aria-pressed='false') Dark
 
               //- Role-based settings
               if currentUser
                 if currentUser.roles && currentUser.roles.includes('admin')
                   hr.settings-panel__divider
                   .settings-panel__item
-                    label.settings-panel__label Admin
+                    span.settings-panel__label Admin
                     a.settings-panel__link(href='/admin/users') Manage Users
                     a.settings-panel__link(href='/auth/register') Create Account
 
                 if currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('developer'))
                   hr.settings-panel__divider
                   .settings-panel__item
-                    label.settings-panel__label Tools
+                    span.settings-panel__label Tools
                     a.settings-panel__link(href='/feed') Activity Feed
 
               //- Always show
               hr.settings-panel__divider
               .settings-panel__item
-                label.settings-panel__label Offline Mode
-                .settings-panel__options
-                  button.settings-panel__btn#offlineOff(type='button') Off
-                  button.settings-panel__btn#offlineOn(type='button') On
+                span#offlineLabel.settings-panel__label Offline Mode
+                .settings-panel__options(role='group' aria-labelledby='offlineLabel')
+                  button.settings-panel__btn#offlineOff(type='button' aria-pressed='false') Off
+                  button.settings-panel__btn#offlineOn(type='button' aria-pressed='false') On
 
               hr.settings-panel__divider
               .settings-panel__item
-                label.settings-panel__label Help
+                span.settings-panel__label Help
                 button.settings-panel__link#tourGeneral(type='button') Site Tour
                 if currentUser
                   if currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('transcriber'))
@@ -107,7 +126,7 @@ html(lang="en" data-theme="auto")
                 a.settings-panel__link(href='/profile') My Profile
                 a.settings-panel__link(href='/auth/change-password') Change Password
 
-    main#main-content.site-main
+    main#main-content.site-main(tabindex='-1')
       .container
         block content
 
@@ -151,18 +170,21 @@ html(lang="en" data-theme="auto")
     //- Birthday memorial popup (May 6th only)
     #birthdayModal.ocr-modal(hidden)
       .ocr-modal__backdrop
-      .ocr-modal__dialog.birthday-dialog(role='dialog' aria-labelledby='birthdayTitle' aria-modal='true')
+      .ocr-modal__dialog.birthday-dialog(role='dialog' aria-labelledby='birthdayTitle' aria-modal='true' tabindex='-1')
         .birthday-header
-          span.birthday-candle 🕯️
+          span.birthday-candle(aria-hidden='true') 🕯️
           h2#birthdayTitle.ocr-modal__title Remembering Samuel Starling
-          span.birthday-candle 🕯️
+          span.birthday-candle(aria-hidden='true') 🕯️
         p.birthday-date May 6, 1940
         p Today marks the birthday of Rev. Samuel Starling. His wisdom, kindness, and faith continue to touch lives through the sermons preserved here.
         p If you'd like, leave a short message in his memory. These are collected and cherished by the family.
         .form-group
-          input#birthdayName.form-input(type='text' placeholder='Your name (optional)' maxlength='100')
+          label(for='birthdayName') Your name (optional)
+          input#birthdayName.form-input(type='text' autocomplete='name' maxlength='100')
         .form-group
-          textarea#birthdayMessage.form-input(rows='3' placeholder='A birthday wish, a memory, or a word of thanks...' maxlength='2000')
+          label(for='birthdayMessage') Your message
+          textarea#birthdayMessage.form-input(rows='3' placeholder='A birthday wish, a memory, or a word of thanks...' maxlength='2000' aria-describedby='birthdayMessageHint')
+          span#birthdayMessageHint.form-hint(hidden) Please write a short message before sending.
         .ocr-modal__actions
           button#birthdaySend.btn.btn--accent(type='button') Send Message
           button#birthdayDismiss.btn.btn--outline(type='button') Maybe Later
@@ -185,16 +207,27 @@ html(lang="en" data-theme="auto")
         var msgInput = document.getElementById('birthdayMessage');
         var successEl = document.getElementById('birthdaySuccess');
         if (!modal) return;
+        var hint = document.getElementById('birthdayMessageHint');
+        var lastFocus = document.activeElement;
+        function close() {
+          modal.hidden = true;
+          if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
         modal.hidden = false;
-        dismissBtn.addEventListener('click', function() {
-          modal.hidden = true;
-        });
-        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', function() {
-          modal.hidden = true;
-        });
+        modal.querySelector('.ocr-modal__dialog').focus();
+        dismissBtn.addEventListener('click', close);
+        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', close);
+        modal.addEventListener('keydown', function(e) { if (e.key === 'Escape') close(); });
         sendBtn.addEventListener('click', function() {
           var msg = msgInput.value.trim();
-          if (!msg) { msgInput.focus(); return; }
+          if (!msg) {
+            hint.hidden = false;
+            msgInput.setAttribute('aria-invalid', 'true');
+            msgInput.focus();
+            return;
+          }
+          hint.hidden = true;
+          msgInput.removeAttribute('aria-invalid');
           sendBtn.disabled = true;
           sendBtn.textContent = 'Sending...';
           fetch('/birthday/message', {
@@ -203,10 +236,13 @@ html(lang="en" data-theme="auto")
             body: JSON.stringify({ author_name: nameInput.value, message: msg }),
           }).then(function(r) { return r.json(); }).then(function(data) {
             if (data.ok) {
+              // Stay open so the thank-you can be read at the visitor's own pace
               successEl.hidden = false;
               msgInput.value = '';
               localStorage.setItem(key, 'true');
-              setTimeout(function() { modal.hidden = true; }, 3000);
+              sendBtn.hidden = true;
+              dismissBtn.textContent = 'Close';
+              dismissBtn.focus();
             } else {
               sendBtn.textContent = 'Send Message';
               sendBtn.disabled = false;
@@ -220,15 +256,19 @@ html(lang="en" data-theme="auto")
 
     footer.site-footer
       .container
-        p
-          | &copy; #{new Date().getFullYear()} Samuel&apos;s Sermons
-          span.site-footer__divider |
+        p.site-footer__dedication Dedicated to the memory of Rev. Samuel Starling
+        p.site-footer__links
+          span &copy; #{new Date().getFullYear()} Samuel&apos;s Sermons
+          span.site-footer__divider(aria-hidden='true') |
           a(href='mailto:transcribe@samuelsermons.com') transcribe@samuelsermons.com
-          span.site-footer__divider |
+          span.site-footer__divider(aria-hidden='true') |
           a(href='/feed') Activity Feed
-          span.site-footer__divider |
-          | Made by 
-          a(href='https://tylerstarling.com' target='_blank' rel='noopener noreferrer') Tyler Starling
+          span.site-footer__divider(aria-hidden='true') |
+          span
+            | Made by 
+            a(href='https://tylerstarling.com' target='_blank' rel='noopener noreferrer')
+              | Tyler Starling
+              span.sr-only  (opens in a new tab)
 
     //- Mobile nav toggle
     script.
@@ -241,7 +281,23 @@ html(lang="en" data-theme="auto")
             nav.setAttribute('data-open', !open);
             toggle.setAttribute('aria-expanded', !open);
           });
+          nav.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && nav.getAttribute('data-open') === 'true') {
+              nav.setAttribute('data-open', 'false');
+              toggle.setAttribute('aria-expanded', 'false');
+              toggle.focus();
+            }
+          });
         }
+
+        // Mark the current page in the navigation (shape + screen reader cue, not color alone)
+        var here = window.location.pathname.replace(/\/+$/, '') || '/';
+        document.querySelectorAll('#primary-nav a.site-header__link').forEach(function(a) {
+          var href = a.getAttribute('href');
+          if (href === here || (href !== '/' && here.indexOf(href + '/') === 0)) {
+            a.setAttribute('aria-current', 'page');
+          }
+        });
       })();
 
     //- Settings panel toggle + theme controls + preference sync
@@ -275,11 +331,50 @@ html(lang="en" data-theme="auto")
         });
 
         document.addEventListener('click', function(e) {
-          if (!panel.contains(e.target) && e.target !== gear) {
+          if (!panel.contains(e.target) && !gear.contains(e.target)) {
             panel.hidden = true;
             gear.setAttribute('aria-expanded', 'false');
           }
         });
+
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && !panel.hidden) {
+            panel.hidden = true;
+            gear.setAttribute('aria-expanded', 'false');
+            gear.focus();
+          }
+        });
+
+        // Selected state for a group of toggle buttons (aria-pressed + class)
+        function markPressed(buttons, active) {
+          buttons.forEach(function(b) {
+            if (!b) return;
+            var on = b === active;
+            b.classList.toggle('settings-panel__btn--active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+        }
+
+        // Text size (A / A+ / A++), remembered like the theme
+        var sizeBtns = [document.getElementById('textSizeNormal'), document.getElementById('textSizeLarge'), document.getElementById('textSizeLarger')];
+        function currentSize() {
+          return document.documentElement.getAttribute('data-text-size') || 'normal';
+        }
+        function updateSize() {
+          var cur = currentSize();
+          markPressed(sizeBtns, sizeBtns.filter(function(b) { return b && b.getAttribute('data-text-size') === cur; })[0]);
+        }
+        sizeBtns.forEach(function(b) {
+          if (!b) return;
+          b.addEventListener('click', function() {
+            var size = b.getAttribute('data-text-size');
+            if (size === 'normal') document.documentElement.removeAttribute('data-text-size');
+            else document.documentElement.setAttribute('data-text-size', size);
+            savePreference('text_size', size);
+            updateSize();
+          });
+        });
+        updateSize();
 
         panel.addEventListener('click', function(e) { e.stopPropagation(); });
 
@@ -300,10 +395,8 @@ html(lang="en" data-theme="auto")
 
         function updateActive() {
           var current = document.documentElement.getAttribute('data-theme') || 'auto';
-          [btnAuto, btnLight, btnDark].forEach(function(b) { b.classList.remove('settings-panel__btn--active'); });
-          if (current === 'auto') btnAuto.classList.add('settings-panel__btn--active');
-          else if (current === 'light') btnLight.classList.add('settings-panel__btn--active');
-          else if (current === 'dark') btnDark.classList.add('settings-panel__btn--active');
+          var active = current === 'light' ? btnLight : current === 'dark' ? btnDark : btnAuto;
+          markPressed([btnAuto, btnLight, btnDark], active);
         }
 
         btnAuto.addEventListener('click', function() { setTheme('auto'); });
@@ -372,6 +465,8 @@ html(lang="en" data-theme="auto")
         function updateButtons() {
           offOn.classList.toggle('settings-panel__btn--active', isEnabled);
           offOff.classList.toggle('settings-panel__btn--active', !isEnabled);
+          offOn.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+          offOff.setAttribute('aria-pressed', isEnabled ? 'false' : 'true');
         }
 
         function enableSW() {
@@ -414,13 +509,14 @@ html(lang="en" data-theme="auto")
           enableSW();
         });
 
-        declineBtn.addEventListener('click', function() {
+        function closeOffline() {
           modal.hidden = true;
-        });
+          offOn.focus();
+        }
 
-        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', function() {
-          modal.hidden = true;
-        });
+        declineBtn.addEventListener('click', closeOffline);
+        modal.querySelector('.ocr-modal__backdrop').addEventListener('click', closeOffline);
+        modal.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeOffline(); });
 
         // Auto-register if previously enabled
         if (isEnabled && 'serviceWorker' in navigator) {
@@ -437,6 +533,9 @@ html(lang="en" data-theme="auto")
           btn.setAttribute('data-visible', window.scrollY > 400 ? 'true' : 'false');
         }, { passive: true });
         btn.addEventListener('click', function() {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+          var main = document.getElementById('main-content');
+          if (main) main.focus({ preventScroll: true });
         });
       })();
