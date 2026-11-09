@@ -17,7 +17,7 @@
 
 .bookmark-item__title {
   font-family: var(--font-heading);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-normal);
   font-size: var(--text-base);
 }
 
@@ -35,26 +35,22 @@
 .highlight-group__title {
   font-size: var(--text-lg);
   padding-left: var(--space-md);
-  border-left: 3px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
   margin-bottom: var(--space-md);
-}
-
-.highlight-group__title a {
-  text-decoration: none;
 }
 
 .highlight-item {
   padding: var(--space-md);
   margin-bottom: var(--space-sm);
   background-color: var(--color-surface-alt);
-  border-left: 3px solid var(--color-accent);
+  border-left: 2px solid var(--color-accent);
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
 .highlight-item__text {
   font-family: var(--font-heading);
   font-style: italic;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   line-height: var(--leading-relaxed);
   color: var(--color-text);
   margin-bottom: var(--space-xs);
@@ -110,8 +106,9 @@
 
 .sermon-transcription-text {
   font-family: var(--font-body);
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   line-height: var(--leading-relaxed);
+  max-width: var(--measure);
   white-space: pre-wrap;
   cursor: text;
   user-select: text;

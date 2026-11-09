@@ -12,20 +12,38 @@
   height: 12rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--color-accent);
+  /* Quiet double ring: a thin gold line with an ivory gap */
+  padding: 5px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-accent);
   margin: 0 auto var(--space-xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 30rem) {
+  .hero {
+    padding: var(--space-xl) 0;
+  }
+
+  .hero__portrait {
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .hero__title {
+    font-size: var(--text-3xl);
+  }
 }
 
 .hero__title {
   font-size: var(--text-4xl);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
 }
 
 .hero__subtitle {
   font-size: var(--text-lg);
   color: var(--color-text-secondary);
-  max-width: 36rem;
+  max-width: var(--measure);
   margin: 0 auto var(--space-xl);
   line-height: var(--leading-relaxed);
 }
@@ -50,13 +68,14 @@
   right: 0;
   height: 40vh;
   background: url('/images/wv-hills.jpg') center bottom / cover no-repeat;
-  opacity: 0.06;
+  opacity: 0.05;
+  filter: grayscale(0.6) sepia(0.15);
   pointer-events: none;
   z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
-  .home-bg::after {
+  [data-theme="auto"] .home-bg::after {
     opacity: 0.04;
   }
 }
@@ -68,12 +87,12 @@
 /* --- Sermon of the Day --- */
 .sermon-of-day {
   text-align: center;
-  max-width: 28rem;
+  max-width: 30rem;
   margin: 0 auto;
 }
 
 .sermon-of-day__heading {
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-md);
 }

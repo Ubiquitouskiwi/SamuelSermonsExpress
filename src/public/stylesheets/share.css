@@ -22,16 +22,19 @@
 }
 
 .share-popup__item {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: var(--target-min);
+  width: 100%;
   padding: var(--space-sm) var(--space-md);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--color-text);
   text-decoration: none;
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   transition: background-color var(--transition-fast);
 }
 

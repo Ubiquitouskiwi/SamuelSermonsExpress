@@ -21,14 +21,25 @@
   top: -100%;
   left: var(--space-md);
   z-index: 1000;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-accent);
+  padding: var(--space-sm) var(--space-lg);
+  min-height: var(--target-min);
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-accent-light);
   color: var(--color-primary-dark);
+  font-family: var(--font-ui);
   font-weight: var(--weight-bold);
   border-radius: 0 0 var(--border-radius) var(--border-radius);
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .skip-link:focus {
   top: 0;
+  outline: 3px solid var(--color-primary-dark);
+  outline-offset: -6px;
+}
+
+/* Main receives focus from the skip link; no ring needed on the whole region */
+#main-content:focus {
+  outline: none;
 }
