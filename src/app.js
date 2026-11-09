@@ -56,6 +56,15 @@ app.use(helmet({
   },
 }));
 
+// Health check for the hosting platform's deploy gate and uptime probes.
+// Registered before rate limiting, logging and sessions so probes never touch
+// the database, never get throttled and don't flood the request log. Liveness
+// only: it says the process is up and serving, not that every dependency is.
+app.get('/healthz', function (req, res) {
+  res.set('Cache-Control', 'no-store');
+  res.status(200).json({ ok: true });
+});
+
 // Rate limiting (relaxed in development)
 var isDev = process.env.NODE_ENV !== 'production';
 var limiter = rateLimit({
