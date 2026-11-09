@@ -18,8 +18,19 @@ block content
       section.section.sermon-of-day
         hr.divider.divider--center(aria-hidden='true')
         h2.sermon-of-day__heading Sermon of the Day
-        .card
-          .sermon-of-day__badge
-            span.badge(class=sermonOfDay.sermonType === 'sermon' ? 'badge--sermon' : sermonOfDay.sermonType === 'funeral' ? 'badge--funeral' : 'badge--special')= sermonOfDay.sermonType
-          h3.sermon-of-day__title= sermonOfDay.title
-          a.btn.btn--primary(href=`/sermons/details?id=${sermonOfDay.id}`) Read This Sermon
+        - var sodMatch = /^(\d+)\.\s+(.+)$/.exec(sermonOfDay.title || '')
+        - var sodName = sodMatch ? sodMatch[2] : sermonOfDay.title
+        - var sodUrl = `/sermons/details?id=${sermonOfDay.id}`
+        article.sermon-card
+          .sermon-card__body
+            h3.sermon-card__title
+              a.sermon-card__link(href=sodUrl)= sodName
+            .sermon-card__details
+              if sodMatch
+                p.sermon-card__meta No. #{sodMatch[1]}
+              if sermonOfDay.sermonType
+                ul.sermon-card__tags
+                  li
+                    span.badge(class=sermonOfDay.sermonType === 'sermon' ? 'badge--sermon' : sermonOfDay.sermonType === 'funeral' ? 'badge--funeral' : 'badge--special')= sermonOfDay.sermonType
+          .sermon-card__actions
+            a.btn.btn--small.btn--primary(href=sodUrl) Read This Sermon

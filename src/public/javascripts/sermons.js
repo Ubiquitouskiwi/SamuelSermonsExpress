@@ -29,42 +29,99 @@
     'special day': { cls: 'badge--special', label: 'Special Day' }
   };
 
-  function badgeFor(type) {
-    var b = badgeMap[type] || { cls: '', label: type || 'Other' };
-    return '<span class="badge ' + b.cls + '">' + b.label + '</span>';
-  }
-
   function escHtml(str) {
     var d = document.createElement('div');
     d.appendChild(document.createTextNode(str));
     return d.innerHTML;
   }
 
-  // --- Card rendering ---
+  // Ordered sermons carry their number as a "12. " title prefix.
+  function splitTitle(title) {
+    var m = /^(\d+)\.\s+(.+)$/.exec(title || '');
+    return m ? { number: m[1], name: m[2] } : { number: null, name: title || '' };
+  }
+
+  var collectionLabels = { ordered: 'Ordered collection', unordered: 'Unordered collection' };
+
+  // Bookmarks live in the browser (the same store the sermon page writes to).
+  var savedIds = {};
+  try {
+    JSON.parse(localStorage.getItem('sermon_bookmarks') || '[]').forEach(function (b) {
+      savedIds[String(b.id)] = true;
+    });
+  } catch (e) {}
+
+  function el(tagName, cls, text) {
+    var node = document.createElement(tagName);
+    if (cls) node.className = cls;
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  function tagItem(text, cls) {
+    var li = el('li');
+    li.appendChild(el('span', 'badge' + (cls ? ' ' + cls : ''), text));
+    return li;
+  }
+
+  // --- Card rendering (DOM APIs, so titles are never parsed as HTML) ---
   function createCard(s) {
-    var card = document.createElement('article');
-    card.className = 'sermon-card';
     var detailUrl = '/sermons/details?id=' + s.id;
+    var t = splitTitle(s.title);
+    var card = el('article', 'sermon-card');
 
-    var actionBtn;
-    if (userInfo.canTranscribe) {
-      actionBtn = '<a class="btn btn--small btn--outline sermon-card__action-link" href="/admin/transcribe/' + s.id + '">Transcribe</a>';
-    } else {
-      actionBtn = '<a class="btn btn--small btn--outline sermon-card__action-link" href="mailto:admin@samuelsermons.com?subject=' +
-        encodeURIComponent('Transcriber Access Request') +
-        '&body=' + encodeURIComponent('I would like to help transcribe sermons. Please grant me transcriber access.') +
-        '">Request Access</a>';
+    var body = el('div', 'sermon-card__body');
+    var heading = el('h3', 'sermon-card__title');
+    var link = el('a', 'sermon-card__link', t.name);
+    link.href = detailUrl;
+    heading.appendChild(link);
+    body.appendChild(heading);
+
+    // Metadata line and tags: only fields this sermon actually has
+    var details = el('div', 'sermon-card__details');
+    var metaParts = [];
+    if (t.number) metaParts.push('No. ' + t.number);
+    if (collectionLabels[s.collection]) metaParts.push(collectionLabels[s.collection]);
+    if (metaParts.length) {
+      var meta = el('p', 'sermon-card__meta');
+      metaParts.forEach(function (part, i) {
+        if (i) {
+          var sep = el('span', 'sermon-card__sep', '·');
+          sep.setAttribute('aria-hidden', 'true');
+          meta.appendChild(sep);
+        }
+        meta.appendChild(el('span', null, part));
+      });
+      details.appendChild(meta);
     }
+    var tags = el('ul', 'sermon-card__tags');
+    var b = badgeMap[s.sermonType];
+    if (s.sermonType) tags.appendChild(tagItem(b ? b.label : s.sermonType, b ? b.cls : ''));
+    if (savedIds[String(s.id)]) tags.appendChild(tagItem('Saved', 'badge--saved'));
+    if (tags.children.length) details.appendChild(tags);
+    if (details.children.length) body.appendChild(details);
+    card.appendChild(body);
 
-    card.innerHTML =
-      '<a class="sermon-card__link" href="' + detailUrl + '">' +
-        '<div class="sermon-card__badge">' + badgeFor(s.sermonType) + '</div>' +
-        '<h3 class="sermon-card__title">' + escHtml(s.title) + '</h3>' +
-      '</a>' +
-      '<div class="sermon-card__actions">' +
-        actionBtn +
-        '<button class="btn btn--small btn--outline share-trigger" type="button" data-share-url="' + detailUrl + '" data-share-title="' + escHtml(s.title) + '">Share</button>' +
-      '</div>';
+    var actions = el('div', 'sermon-card__actions');
+    var action;
+    if (userInfo.canTranscribe) {
+      action = el('a', 'btn btn--small btn--outline sermon-card__action-link', 'Transcribe');
+      action.href = '/admin/transcribe/' + s.id;
+    } else {
+      action = el('a', 'btn btn--small btn--outline sermon-card__action-link', 'Request Access');
+      action.href = 'mailto:admin@samuelsermons.com?subject=' +
+        encodeURIComponent('Transcriber Access Request') +
+        '&body=' + encodeURIComponent('I would like to help transcribe sermons. Please grant me transcriber access.');
+    }
+    var share = el('button', 'btn btn--small btn--outline share-trigger', 'Share');
+    share.type = 'button';
+    share.setAttribute('data-share-url', detailUrl);
+    share.setAttribute('data-share-title', s.title);
+    // Repeated button labels name their sermon for screen reader users
+    share.appendChild(el('span', 'sr-only', ' ' + t.name));
+    actions.appendChild(action);
+    actions.appendChild(share);
+    card.appendChild(actions);
     return card;
   }
 
