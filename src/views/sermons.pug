@@ -39,19 +39,24 @@ block content
       .recently-viewed__list
 
     #sermon-grid.sermon-grid
-      //- Loading skeleton (hidden once JS renders cards)
-      .sermon-grid__skeleton#gridSkeleton(aria-hidden='true')
-        - for (var i = 0; i < 6; i++)
-          .skeleton-card
-            .skeleton-card__title
-            .skeleton-card__badge
+      //- Server-rendered title links so every sermon is reachable without JS
+      //- (and by crawlers); sermons.js replaces these with the interactive cards.
+      each s in orderedSermons.concat(unorderedSermons || [])
+        - var sMatch = /^(\d+)\.\s+(.+)$/.exec(s.title || '')
+        article.sermon-card
+          .sermon-card__body
+            h3.sermon-card__title
+              a.sermon-card__link(href=`/sermons/details?id=${s.id}`)= sMatch ? sMatch[2] : s.title
+            if sMatch
+              .sermon-card__details
+                p.sermon-card__meta No. #{sMatch[1]}
 
     #sermon-sentinel.sermon-sentinel(aria-hidden='true') Loading more sermons...
 
   script.
     window.__SERMONS__ = {
-      ordered: !{JSON.stringify(orderedSermons)},
-      unordered: !{JSON.stringify(unorderedSermons || [])}
+      ordered: !{seo.jsonForScript(orderedSermons)},
+      unordered: !{seo.jsonForScript(unorderedSermons || [])}
     };
     window.__USER__ = {
       canTranscribe: !{JSON.stringify(!!(currentUser && currentUser.roles && (currentUser.roles.includes('admin') || currentUser.roles.includes('transcriber'))))}

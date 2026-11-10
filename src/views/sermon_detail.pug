@@ -32,6 +32,16 @@ block content
         .action-stack
           a.btn.btn--primary(href='/sermons') Browse All Sermons
           a.btn.btn--outline(href='/about') About This Archive
+        if prevSermon || nextSermon
+          nav.action-stack(aria-label='Previous and next sermons' style='margin-top: var(--space-md);')
+            if prevSermon
+              a.btn.btn--outline(href=`/sermons/details?id=${prevSermon.id}` rel='prev')
+                span(aria-hidden='true') &larr;
+                |  Previous: #{splitTitle(prevSermon.title)}
+            if nextSermon
+              a.btn.btn--outline(href=`/sermons/details?id=${nextSermon.id}` rel='next')
+                | Next: #{splitTitle(nextSermon.title)}
+                span(aria-hidden='true')  &rarr;
 
     section.sermon-detail__viewer(aria-label='Sermon document viewer')
       h2.sr-only Sermon Document
@@ -72,7 +82,7 @@ block content
   script.
     // Track recently viewed
     (function() {
-      var sermon = { id: !{sermon.id}, title: !{JSON.stringify(sermon.title)} };
+      var sermon = { id: !{seo.jsonForScript(sermon.id)}, title: !{seo.jsonForScript(sermon.title)} };
       try {
         var recent = JSON.parse(localStorage.getItem('recently_viewed') || '[]');
         recent = recent.filter(function(s) { return s.id !== sermon.id; });

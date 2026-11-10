@@ -67,7 +67,7 @@
   left: 0;
   right: 0;
   height: 40vh;
-  background: url('/images/wv-hills.jpg') center bottom / cover no-repeat;
+  background: url('/images/wv-hills.webp') center bottom / cover no-repeat;
   opacity: 0.05;
   filter: grayscale(0.6) sepia(0.15);
   pointer-events: none;

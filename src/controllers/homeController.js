@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const pool = require('../db/pool');
+const seo = require('../utils/seo');
 
 // Display home page with Sermon of the Day
 exports.index = asyncHandler(async (req, res, next) => {
@@ -20,5 +21,5 @@ exports.index = asyncHandler(async (req, res, next) => {
     } catch (err) {
       // Don't break the home page if DB is down
     }
-    res.render("index", { title: "Samuel Sermons", pageTitle: null, sermonOfDay });
+    res.render("index", { title: "Samuel Sermons", pageTitle: null, sermonOfDay, jsonLd: seo.homeJsonLd() });
 });

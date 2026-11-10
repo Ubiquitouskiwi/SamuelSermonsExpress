@@ -1,6 +1,7 @@
 const pool = require('../db/pool');
 const asyncHandler = require('express-async-handler');
 const createError = require('http-errors');
+const seo = require('../utils/seo');
 
 // Fallback to hardcoded data if DB is not available yet
 const orderedSermonData = require('../utils/orderedSermonData');
@@ -44,13 +45,15 @@ exports.index = asyncHandler(async (req, res) => {
 
 // Display detail page for sermon
 exports.sermon_detail = asyncHandler(async (req, res, next) => {
-  const sermonId = parseInt(req.query.id, 10);
-  if (isNaN(sermonId)) {
-    return next(createError(400, 'Invalid sermon ID'));
+  // Only plain positive integers are sermon ids; anything else is a missing page (404), not a bad request
+  const sermonId = /^\d+$/.test(req.query.id || '') ? parseInt(req.query.id, 10) : NaN;
+  if (isNaN(sermonId) || sermonId < 1) {
+    return next(createError(404, 'Sermon not found'));
   }
 
   // Try DB first
   let sermon = null;
+  let neighbors = null;
   try {
     const result = await pool.query(
       'SELECT id, title, sermon_type AS "sermonType", collection, pdf_path AS "imageLink", transcription_text AS "transcriptionText", transcription_status AS "transcriptionStatus" FROM sermons WHERE id = $1',
@@ -58,6 +61,13 @@ exports.sermon_detail = asyncHandler(async (req, res, next) => {
     );
     if (result.rows.length > 0) {
       sermon = result.rows[0];
+      const near = await pool.query(
+        `SELECT id, title FROM sermons
+         WHERE id = (SELECT MAX(id) FROM sermons WHERE id < $1)
+            OR id = (SELECT MIN(id) FROM sermons WHERE id > $1)`,
+        [sermonId]
+      );
+      neighbors = near.rows;
     }
   } catch (err) {
     console.warn('DB query failed, using hardcoded data:', err.message);
@@ -65,17 +75,39 @@ exports.sermon_detail = asyncHandler(async (req, res, next) => {
 
   // Fallback to hardcoded data
   if (!sermon) {
-    sermon = orderedSermonData.find((s) => s.id === sermonId)
-      || unorderedSermonData.find((s) => s.id === sermonId)
-      || null;
+    const all = orderedSermonData.concat(unorderedSermonData);
+    sermon = all.find((s) => s.id === sermonId) || null;
+    neighbors = all;
   }
 
   if (!sermon) {
     return next(createError(404, 'Sermon not found'));
   }
 
-  res.render('sermon_detail', { sermon, pageTitle: sermon.title, pageDescription: 'Read "' + sermon.title + '" — a ' + sermon.sermonType + ' by Rev. Samuel Starling.' });
+  // Previous/next by id, from either the DB rows or the fallback list
+  const prevSermon = neighbors.filter((s) => s.id < sermonId).sort((a, b) => b.id - a.id)[0] || null;
+  const nextSermon = neighbors.filter((s) => s.id > sermonId).sort((a, b) => a.id - b.id)[0] || null;
+
+  const displayTitle = splitTitle(sermon.title);
+  const pageDescription = seo.summarize(sermon.transcriptionText)
+    || 'Read "' + sermon.title + '" — a ' + sermon.sermonType + ' by Rev. Samuel Starling.';
+
+  res.render('sermon_detail', {
+    sermon,
+    prevSermon,
+    nextSermon,
+    splitTitle,
+    pageTitle: sermon.title,
+    pageDescription,
+    jsonLd: seo.sermonJsonLd(sermon, displayTitle, pageDescription),
+  });
 });
+
+// Ordered sermons carry their number as a "12. " prefix; strip it for display
+function splitTitle(title) {
+  const m = /^(\d+)\.\s+(.+)$/.exec(title || '');
+  return m ? m[2] : (title || '');
+}
 
 // Display Sermon create page on GET
 exports.sermon_create_get = asyncHandler(async (req, res) => {
