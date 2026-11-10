@@ -8,9 +8,9 @@
   popup.innerHTML =
     '<div class="share-popup__inner">' +
       '<button class="share-popup__item" data-action="copy">Copy Link</button>' +
-      '<a class="share-popup__item" data-action="facebook" target="_blank" rel="noopener noreferrer">Facebook</a>' +
-      '<a class="share-popup__item" data-action="twitter" target="_blank" rel="noopener noreferrer">X (Twitter)</a>' +
-      '<a class="share-popup__item" data-action="email">Email</a>' +
+      '<a class="share-popup__item" data-action="facebook" href="https://www.facebook.com/sharer/sharer.php" target="_blank" rel="noopener noreferrer nofollow">Facebook</a>' +
+      '<a class="share-popup__item" data-action="twitter" href="https://twitter.com/intent/tweet" target="_blank" rel="noopener noreferrer nofollow">X (Twitter)</a>' +
+      '<a class="share-popup__item" data-action="email" href="mailto:">Email</a>' +
     '</div>';
   document.body.appendChild(popup);
 

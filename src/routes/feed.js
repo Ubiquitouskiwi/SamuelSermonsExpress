@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
+const seo = require('../utils/seo');
 
 // RSS 2.0 feed of sermon events (public-facing: only uploads and completed transcriptions)
 router.get('/rss', async (req, res) => {
@@ -15,7 +16,7 @@ router.get('/rss', async (req, res) => {
        LIMIT 50`
     );
 
-    var siteUrl = process.env.SITE_URL || 'https://www.samuelsermons.com';
+    var siteUrl = seo.siteUrl();
 
     // Add birthday announcement on May 6th
     var now = new Date();
@@ -88,10 +89,10 @@ router.get('/', async (req, res) => {
        ORDER BY e.created_at DESC
        LIMIT 50`
     );
-    res.render('feed', { events: result.rows });
+    res.render('feed', { events: result.rows, pageTitle: 'Activity Feed', pageScreenshot: 'feed', pageDescription: "Follow the progress of digitizing and transcribing Rev. Samuel Starling's sermon collection." });
   } catch (err) {
     console.error('Feed page error:', err);
-    res.render('feed', { events: [] });
+    res.render('feed', { events: [], pageTitle: 'Activity Feed', pageScreenshot: 'feed', pageDescription: "Follow the progress of digitizing and transcribing Rev. Samuel Starling's sermon collection." });
   }
 });
 

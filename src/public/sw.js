@@ -1,5 +1,5 @@
 // Service Worker for offline mode
-var CACHE_NAME = 'samuel-sermons-v1';
+var CACHE_NAME = 'samuel-sermons-v2';
 var STATIC_ASSETS = [
   '/',
   '/sermons',
@@ -11,7 +11,7 @@ var STATIC_ASSETS = [
   '/javascripts/sermon-interactions.js',
   '/javascripts/bookmarks-page.js',
   '/images/samuel-starling-1.jpg',
-  '/images/wv-hills.jpg',
+  '/images/wv-hills.webp',
   '/favicon.svg',
 ];
 

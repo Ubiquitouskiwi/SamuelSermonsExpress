@@ -10,22 +10,39 @@ html(lang="en" data-theme="auto")
     title
       block title
         | #{pageTitle ? pageTitle + ' | ' : ''}Samuel&apos;s Sermons
+    - var siteBase = SITE_URL || 'https://samuelsermons.com'
+    - var metaDescription = pageDescription || "Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church."
+    - var socialTitle = pageTitle ? pageTitle + " | Samuel's Sermons" : "Samuel's Sermons"
+    - var socialImage = siteBase + '/images/screenshots/' + (pageScreenshot || 'home') + '-card.png'
+    - var ld = jsonLd || (seo && !noindex ? seo.pageJsonLd(pageTitle, canonicalUrl) : null)
     link(rel='icon' type='image/svg+xml' href='/favicon.svg')
+    link(rel='apple-touch-icon' href='/apple-touch-icon.png')
     meta(name='keywords' content='Samuel Starling Sermons Methodist Church Teachings')
-    meta(name='description' content="Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church.")
+    meta(name='description' content=metaDescription)
     meta(name='author' content='Starlingtek, LLC')
-    meta(property='og:title' content=pageTitle ? pageTitle + ' | Samuel Sermons' : 'Samuel Sermons | Home')
-    meta(property='og:description' content=pageDescription || "Home of Rev. Samuel Starling's Sermons created throughout his time in the Methodist Church.")
-    meta(property='og:image' content=(SITE_URL || 'https://www.samuelsermons.com') + '/images/screenshots/' + (pageScreenshot || 'home') + '-card.png')
-    meta(property='og:url' content=(SITE_URL || 'https://www.samuelsermons.com'))
+    if noindex
+      meta(name='robots' content='noindex')
+    if canonicalUrl
+      link(rel='canonical' href=canonicalUrl)
+    meta(property='og:site_name' content="Samuel's Sermons")
+    meta(property='og:type' content=jsonLd && sermon ? 'article' : 'website')
+    meta(property='og:title' content=socialTitle)
+    meta(property='og:description' content=metaDescription)
+    meta(property='og:image' content=socialImage)
+    meta(property='og:url' content=canonicalUrl || siteBase + '/')
     meta(name='twitter:card' content='summary_large_image')
-    meta(name='twitter:image' content=(SITE_URL || 'https://www.samuelsermons.com') + '/images/screenshots/' + (pageScreenshot || 'home') + '-card.png')
+    meta(name='twitter:title' content=socialTitle)
+    meta(name='twitter:description' content=metaDescription)
+    meta(name='twitter:image' content=socialImage)
+    if ld
+      script(type='application/ld+json')!= seo.jsonForScript(ld)
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     link(rel='preconnect' href='https://fonts.googleapis.com')
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
     link(href='https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&display=swap' rel='stylesheet')
     link(rel='stylesheet' href='/stylesheets/index.css')
     link(rel='alternate' type='application/rss+xml' title='Samuel\'s Sermons Activity Feed' href='/feed/rss')
+    block head
   body
     a.skip-link(href='#main-content') Skip to main content
 
@@ -415,9 +432,9 @@ html(lang="en" data-theme="auto")
 
     //- Back to top button
     button.back-to-top#back-to-top(type='button' aria-label='Back to top' data-visible='false') &uarr;
-    script(src='/javascripts/share.js')
-    script(src='/javascripts/tour.js')
-    script(src='/javascripts/tooltip.js')
+    script(src='/javascripts/share.js' defer)
+    script(src='/javascripts/tour.js' defer)
+    script(src='/javascripts/tooltip.js' defer)
 
     //- Welcome modal logic
     script.

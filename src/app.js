@@ -11,6 +11,7 @@ var session = require('express-session');
 var PgSession = require('connect-pg-simple')(session);
 var pool = require('./db/pool');
 var { loadUser, requirePasswordChange } = require('./middleware/auth');
+var seo = require('./utils/seo');
 
 // Routes
 var indexRouter = require('./routes/index');
@@ -32,8 +33,9 @@ var app = express();
 // Trust proxy (Cloudflare / reverse proxy)
 app.set('trust proxy', 1);
 
-// Make SITE_URL available in all templates
-app.locals.SITE_URL = process.env.SITE_URL || '';
+// Make SITE_URL (apex by default) and the SEO helpers available in all templates
+app.locals.SITE_URL = seo.siteUrl();
+app.locals.seo = seo;
 
 // View engine
 app.set('views', path.join(__dirname, 'views'));
@@ -87,9 +89,26 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// Static assets: filenames aren't fingerprinted, so CSS/JS get a short cache
+// (a deploy shows up within the hour) and images/icons a longer one. The
+// service worker must always be revalidated so offline-mode updates land.
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: function (res, filePath) {
+    if (/[\\/]sw\.js$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (/\.(css|js)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    } else if (/\.(jpe?g|png|webp|svg|ico)$/.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=2592000');
+    }
+  },
+}));
 
-// Sessions
+// Sessions. A missing secret in production would fall back to the public
+// dev value and make session cookies forgeable, so refuse to start instead.
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET must be set in production');
+}
 app.use(session({
   store: new PgSession({
     pool: pool,
@@ -113,6 +132,9 @@ app.use(loadUser);
 // Force password change before accessing any other route
 app.use(requirePasswordChange);
 
+// Canonical URL + noindex for every page
+app.use(seo.seoLocals);
+
 // Routes
 app.use('/', indexRouter);
 app.use('/auth', authLimiter, authRouter);
@@ -130,11 +152,16 @@ app.use('/', sitemapRouter);
 
 // 404 handler
 app.use(function (req, res, next) {
+  seo.markNoindex(res);
   res.status(404).render('404', { pageTitle: 'Page Not Found' });
 });
 
 // Error handler
 app.use(function (err, req, res, next) {
+  seo.markNoindex(res);
+  if (err.status === 404) {
+    return res.status(404).render('404', { pageTitle: 'Page Not Found' });
+  }
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);

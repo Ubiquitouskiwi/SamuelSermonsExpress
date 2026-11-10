@@ -1,8 +1,11 @@
 extends layout
+block head
+  //- The faint hills background is the page's largest paint; let the browser fetch it early
+  link(rel='preload' as='image' href='/images/wv-hills.webp' type='image/webp')
 block content
   .home-bg
     section.hero(aria-labelledby="hero-title")
-      img.hero__portrait(src='/images/samuel-starling-1.jpg' alt='Portrait of Rev. Samuel Starling')
+      img.hero__portrait(src='/images/samuel-starling-1.jpg' alt='Portrait of Rev. Samuel Starling' width='448' height='820' fetchpriority='high')
       hr.divider.divider--center(aria-hidden='true')
       h1#hero-title.hero__title Welcome to Samuel&apos;s Sermons
       p.hero__subtitle

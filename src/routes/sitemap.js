@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
+const seo = require('../utils/seo');
 
 router.get('/sitemap.xml', async (req, res) => {
-  var siteUrl = process.env.SITE_URL || 'https://www.samuelsermons.com';
+  var siteUrl = seo.siteUrl();
   try {
     var result = await pool.query('SELECT id, updated_at FROM sermons ORDER BY id');
     var urls = [
@@ -11,7 +12,6 @@ router.get('/sitemap.xml', async (req, res) => {
       { loc: siteUrl + '/sermons', priority: '0.9' },
       { loc: siteUrl + '/about', priority: '0.7' },
       { loc: siteUrl + '/feed', priority: '0.5' },
-      { loc: siteUrl + '/bookmarks', priority: '0.4' },
     ];
     result.rows.forEach(function (s) {
       urls.push({
