@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./src/bin/www",
+    "test": "jest",
     "devstart": "nodemon ./src/bin/www",
     "devserver": "SET DEBUG=samuel-sermons-express:* & npm run devstart",
     "db:migrate": "node src/db/migrate.js",
