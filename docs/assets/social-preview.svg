@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-labelledby="title desc">
+  <title id="title">Samuel's Sermons</title>
+  <desc id="desc">Samuel's Sermons social preview: the site's italic S monogram over an open book, beside the name Samuel's Sermons and the tagline "A lifetime of sermons, preserved and transcribed by volunteers."</desc>
+  <!-- Palette and type follow src/public/stylesheets/tokens.css: slate #1F2A38, antique gold
+       #C2A66E / #E3CFA3 / #6E5420, ivory #F7F3EC. Headings are Libre Baskerville, body text
+       Source Serif 4 (Georgia fallback), UI text Source Sans 3. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FCFAF6"/>
+      <stop offset="1" stop-color="#EEE8DD"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ivory page with the site's thin muted-gold ribbon across the top -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="8" fill="#C2A66E"/>
+
+  <!-- Faint ruled manuscript lines, bottom right -->
+  <g stroke="#C2A66E" stroke-width="2" opacity="0.2">
+    <line x1="760" y1="572" x2="1280" y2="572"/>
+    <line x1="700" y1="600" x2="1280" y2="600"/>
+    <line x1="640" y1="628" x2="1280" y2="628"/>
+  </g>
+
+  <!-- Logo (256-unit artwork scaled to 384px): slate tile like the site header -->
+  <g transform="translate(112 128) scale(1.5)">
+    <rect x="8" y="8" width="240" height="240" rx="56" fill="#1F2A38"/>
+    <path d="M8 200 H248 V192 Q248 248 192 248 H64 Q8 248 8 192 Z" fill="#141B24"/>
+
+    <!-- Monogram seal: the header's italic S in a thin pale-gold ring -->
+    <circle cx="128" cy="86" r="44" fill="none" stroke="#E3CFA3" stroke-width="2.5"/>
+    <text x="128" y="106" text-anchor="middle" font-family="Libre Baskerville, Baskerville, Georgia, serif"
+          font-size="56" font-style="italic" fill="#E3CFA3">S</text>
+
+    <!-- Open book -->
+    <path d="M128 168 Q96 150 44 154 V208 Q96 204 128 222 Z" fill="#F7F3EC"/>
+    <path d="M128 168 Q160 150 212 154 V208 Q160 204 128 222 Z" fill="#F1EBE1"/>
+    <path d="M128 168 V222" stroke="#857B6D" stroke-width="2.5"/>
+    <g fill="none" stroke="#C2A66E" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+      <path d="M58 170 Q90 168 116 178"/>
+      <path d="M58 182 Q90 180 116 190"/>
+      <path d="M58 194 Q90 192 116 202"/>
+      <path d="M140 178 Q166 168 198 170"/>
+      <path d="M140 190 Q166 180 198 182"/>
+      <path d="M140 202 Q166 192 198 194"/>
+    </g>
+  </g>
+
+  <!-- Wordmark (bold, like the site's page headings) and tagline -->
+  <g font-family="Libre Baskerville, Baskerville, Georgia, serif" font-weight="700" fill="#1F2A38">
+    <text x="574" y="236" font-size="80">Samuel's</text>
+    <text x="574" y="332" font-size="80">Sermons</text>
+  </g>
+  <rect x="578" y="364" width="96" height="4" rx="2" fill="#C2A66E"/>
+  <g font-family="Georgia, serif" font-size="34" fill="#23201C">
+    <text x="576" y="424">A lifetime of sermons, preserved</text>
+    <text x="576" y="468">and transcribed by volunteers.</text>
+  </g>
+  <text x="576" y="526" font-family="Helvetica Neue, Arial, sans-serif" font-size="21"
+        font-weight="600" letter-spacing="1.2" fill="#6E5420">SCANNED ARCHIVE  ·  TRANSCRIPTION  ·  PEER REVIEW</text>
+</svg>
